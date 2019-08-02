@@ -1,3 +1,12 @@
+import visa
+import struct
+import numpy as np
+import time
+import unittest
+import logging
+import pandas as pd
+from matplotlib.pyplot import *
+
 def unpackData(data,waveformat):
     datatype_size = {'BYTE':1,'WORD':2}
     datatype = {'BYTE':'b','WORD':'h'}
