@@ -7,6 +7,8 @@ import logging
 import pandas as pd
 from matplotlib.pyplot import *
 
+rm = visa.ResourceManager()
+
 class Instrument:
     def __init__(self,resource_address,alias):
         self._inst = rm.open_resource(resource_address)
