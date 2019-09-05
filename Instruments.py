@@ -7,113 +7,176 @@ import logging
 import pandas as pd
 from matplotlib.pyplot import *
 
-def unpackData(data,waveformat):
-    datatype_size = {'BYTE':1,'WORD':2}
-    datatype = {'BYTE':'b','WORD':'h'}
-    nchar = int(chr(data[1]))
-    nbytes_returned = int(data[2:nchar+2])
-    padding = nchar+2
-    return struct.unpack('>'+ 'x'*padding + datatype[waveformat] * (nbytes_returned//datatype_size[waveformat]) + 'x' , data)
-
 class Instrument:
-    def __init__(self,address,alias):
-        """ Inicia comunicacao com o intrumento. """
-        rm = visa.ResourceManager()
-        self.visa = rm.open_resource(address)
+    def __init__(self,resource_address,alias):
+        self._inst = rm.open_resource(resource_address)
+        self._idn = self._inst.query("*IDN?")[:-1]
         self._alias = alias
-
-    def write(self, command):
-        return self.visa.write(command)
-
-    def query(self, command):
-        return self.visa.query(command)
-
-    def readRaw(self):
-        return self.visa.read_raw()
-
+        
+    def write(self,command):
+        return self._inst.write(command)
+        
+    def query(self,command):
+        return self._inst.query(command)
+    
+    def read_raw(self):
+        return self._inst.read_raw()
+    
     def open(self):
-        return self.visa.open()
-
+        return self._inst.open()
+    
     def close(self):
-        return self.visa.close()
+        return self._inst.close()
 
-class Source(Instrument):
-    def __init__(self, address, alias):
-        super().__init__(address, alias)
-
-    def setFreq(self, freq):
-        self.write('FREQ {}'.format(freq))
-
-    def setAmp(self, amp):
-        self.write(':POWER {} dBm'.format(amp))
-
-
-class Oscilloscope(Instrument):
-    def __init__(self, address, alias):
-        super().__init__(address, alias)
-
-    def setChan(self, channel):
-        """Selects waveform source channel
-        Input an integer 1-4"""
-        self.write(':WAV:SOUR CHAN{}'.format(channel))
-
-    def setOffset(self, channel, offset):
-        """Sets the vertical value at center od display
-        Input channel idn and offset value"""
-        self.write(":CHANNEL{}:OFFSET {}".format(channel,offset))
-
-    def setInterval(self, start, size):
-        # acho que nao entendi direito ainda o que faz...
-        self.write(':WAV:DATA? {},{}'.format(1,''))
-
-    def getFormat(self):
-        """Gets the waveform data output format"""
-        self.query(':WAV:FORMAT?')[:-1]
-
+class PSGAnalogSignalGenerator(Instrument):
+    def __init__(self,resource_address,alias):
+        super().__init__(resource_address,alias)
+        self.stop()
+        self.stop_mod()
+        
+    def start(self):
+        self.write(":OUTPUT ON")
+    
     def stop(self):
-        """Stop acquiring data"""
-        self.write(":STOP")
+        self.write(":OUTPUT OFF")
+        
+    def start_mod(self):
+        self.write(":OUTPUT:MOD ON")
+        
+    def stop_mod(self):
+        self.write(":OUTPUT:MOD OFF")
+        
+    @property
+    def is_mod_on(self):
+        mod_on = self.query(":OUTPUT:MOD?").strip()
+        return int(mod_on) == 1
+    
+    @property
+    def is_on(self):
+        on = self.query(":OUTPUT?").strip()
+        return int(on) == 1
+        
+    @property
+    def frequency(self):
+        freq = self.query(':FREQ?').strip()
+        return float(freq)
+    
+    @frequency.setter
+    def frequency(self,freq):
+        self.write(':FREQ {}'.format(freq))
+        
+    @property
+    def amplitude(self):
+        amp = self.query(':POWER?').strip()
+        return float(amp)
+    
+    @amplitude.setter
+    def amplitude(self,amp):
+        self.write(':POWER {} dBm'.format(amp))
+        
+class DigitalStorageOscilloscope(Instrument):
+    def __init__(self,resource_address,alias):
+        super().__init__(resource_address,alias)
+        self._channel_source = int(self.query(':WAV:SOUR?').strip()[-1])
+        self._waveformat = self.query(':WAV:FORMAT?').strip()
+        self._offset = float(self.query(":CHANNEL{}:OFFSET?".format(self._channel_source)).split()[0])
+        self._timerange = float(self.query(":TIMEBASE:RANGE?").split()[0])
+        self._yorigin = float(self.query("WAVEFORM:YORIGIN?").split()[0])
+        self._yincrement = float(self.query("WAVEFORM:YINCREMENT?").split()[0])
+        self._xorigin = float(self.query("WAVEFORM:XORIGIN?").split()[0])
+        self._xincrement = float(self.query("WAVEFORM:XINCREMENT?").split()[0])
+        self._sample_rate = float(self.query("ACQuire:SRATe:ANALog?".format(250e6)).split()[0])
+    
+    def unpack_data(self,data,waveformat):
+        datatype_size = {'BYTE':1,'WORD':2}
+        datatype = {'BYTE':'b','WORD':'h'}
 
-    def setTimeRange(self, rnge):
-        """Sets full-scale horizontal time
-        (10 times time-per-division)
-        Input real number"""
-        self.write(':TIMEBASE:RANGE {}'.format(rnge))
+        nchar = int(chr(data[1]))
+        nbytes_returned = int(data[2:nchar+2])
+        padding = nchar+2
 
-    def setAqcMode(self, mode):
-        """Sets the acquisition mode
-        Input str ETIM RTIM PDET
-        HRES SEGM SEGP SEGH """
-        self.write('AQC:MODE {}'.format(mode))
+        return struct.unpack('>'+ 'x'*padding + datatype[waveformat] * (nbytes_returned//datatype_size[waveformat]) + 'x' , data)
 
-    def setSegmAmount(self, num_segments):
-        """Sets number of segments to
-        acquire in sampling mode = SEGM
-        Input int"""
-        self.write('ACQ:SEGM:COUN {}'.format(sum_segments))
-
-    def captureWaveform(self, channel,start=1,npoints=' '):
-        source = 'CHAN'+str(channel)
-        waveformat = self.query(':WAV:FORMAT?')[:-1]
-        self.write(':WAV:SOUR {}'.format(source))
+    def capture(self,start=1,npoints=' '):
         self.write(':WAV:DATA? {},{}'.format(start,npoints))
+    
         data = self.read_raw()
-        Y = list(unpack_data(data,waveformat))
+        Y = list(self.unpack_data(data,self._waveformat))
         return Y
-
-    def scaleData(self, data_array, channel):
-        self.set_channel(channel)
-        origin = float(self.query("WAVEFORM:YORIGIN?")[:-1])
-        increment = float(self.query("WAVEFORM:YINCREMENT")[:-1])
-        return data_array*increment + origin
-
-
-class Attenuator(Instrument):
-    def __init__(self, address, alias):
-        super().__init__(address, alias)
-
-    def attenuate(self, att):
-        d = att[0]
-        u = att[1]
-        self.write('ATT:BANK1:X {}'.format(u))
-        self.write('ATT:BANK1:Y {}'.format(d*10))
+    
+    def start(self):
+        self.write(':RUN')
+        
+    def stop(self):
+        self.write(':STOP')
+    
+    @property
+    def waveformat(self):
+        self._waveformat = self.query(':WAV:FORMAT?').strip()
+        return self._waveformat
+    
+    @waveformat.setter
+    def waveformat(self,form):
+        self.write(':WAV:FORMAT {}'.format(form))
+        self._waveformat = self.query(':WAV:FORMAT?').strip()
+    
+    @property
+    def source(self):
+        self._channel_source = int(self.query(':WAV:SOUR?').strip()[-1])
+        return self._channel_source
+    
+    @source.setter
+    def source(self,sour):
+        self.write(':WAV:SOUR CHAN{}'.format(sour))
+        self._channel_source = int(self.query(':WAV:SOUR?').strip()[-1])
+        
+    @property
+    def offset(self):
+        self._offset = self.query(":CHANNEL{}:OFFSET?".format(self._channel_source)).split()[0]
+        return float(self._offset)
+    
+    @offset.setter
+    def offset(self,offset):
+        self.write(":CHANNEL{}:OFFSET {}".format(self._channel_source,offset))
+        self._offset = float(self.query(":CHANNEL{}:OFFSET?".format(self._channel_source)).split()[0])
+        
+    @property
+    def timeRange(self):
+        self._timerange = float(self.query(":TIMEBASE:RANGE?").split()[0])
+        return self._timerange
+    
+    @timeRange.setter
+    def timeRange(self,timerange):
+        self.write(":TIMEBASE:RANGE {}".format(timerange))
+        self._timerange = float(self.query(":TIMEBASE:RANGE?").split()[0])
+        
+    @property
+    def yOrigin(self):
+        self._yorigin = float(self.query("WAVEFORM:YORIGIN?").split()[0])
+        return self._yorigin
+    
+    @property
+    def xIncrement(self):
+        self._yincrement = float(self.query("WAVEFORM:YINCREMENT?").split()[0])
+        return self._yincrement
+    
+    @property
+    def xOrigin(self):
+        self._xorigin = float(self.query("WAVEFORM:XORIGIN?").split()[0])
+        return self._xorigin
+    
+    @property
+    def xIncrement(self):
+        self._xincrement = float(self.query("WAVEFORM:XINCREMENT?").split()[0])
+        return self._xincrement
+        
+    @property
+    def sampleRate(self):
+        self._sample_rate = float(self.query("ACQuire:SRATe:ANALog?".format(250e6)).split()[0])
+        return self._sample_rate
+    
+    @sampleRate.setter
+    def sampleRate(self, samplerate):
+        self.write("ACQuire:SRATe:ANALog {}".format(samplerate))
+        self._sample_rate = float(self.query("ACQuire:SRATe:ANALog?".format(250e6)).split()[0])
+    
