@@ -49,10 +49,8 @@ class DummyArray(ParameterWithSetpoints):
         return_value = np.random.rand(npoints)
         if hasattr(self.instrument, 'other_inst_connected'):
             PSG = self.instrument.other_inst_connected
-            freq = PSG.freq()
-            amp =  PSG.amp()
             t_list = self.instrument.t_axis.get_latest()
-            return_value += amp*np.sin(t_list*freq) 
+            return_value += PSG.signal(t_list)
         return return_value
 
 class DummyOscilloscopeChannel(InstrumentChannel):
