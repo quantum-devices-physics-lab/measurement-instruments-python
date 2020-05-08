@@ -1,20 +1,11 @@
 import numpy as np
-import os
 import logging
-from qcodes import Station
-from qcodes.dataset.plotting import plot_dataset
 from qcodes.utils.validators import Numbers, Arrays
 from qcodes.instrument.base import Instrument
-from qcodes.logger.logger import start_all_logging
-from qcodes.dataset.measurements import Measurement
 from qcodes.instrument.parameter import ParameterWithSetpoints, Parameter
-from qcodes.dataset.sqlite.database import initialise_or_create_database_at
-from qcodes.dataset.experiment_container import load_or_create_experiment
-
-log = logging.getLogger(__name__)
+from qcodes.instrument.channel import InstrumentChannel
 
 
-# Classe que faz o papel do PSG no lab. Aqui ela basicamente guarda os valores de freq e amplitude    
 class DummySignalGenerator(Instrument):
     
     def __init__(self, name,ifreq=5,iamp=-5, **kwargs):
@@ -37,12 +28,7 @@ class DummySignalGenerator(Instrument):
                            get_cmd=None,
                            set_cmd=None)
 
-# Essa classe representa um parâmetro de conjuto de pontos. Será usado pelo osciloscópio para representar o eixo do tempo.
-class GeneratedSetPoints(Parameter):
-    """
-    A parameter that generates a setpoint array from start, stop and num points
-    parameters.
-    """
+class GeneratedSetPoints(Parameter):   
     def __init__(self, startparam, stopparam, numpointsparam, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self._startparam = startparam
@@ -53,39 +39,37 @@ class GeneratedSetPoints(Parameter):
         return np.linspace(self._startparam(), self._stopparam(),
                               self._numpointsparam())
 
-# Classe que representa uma função cujo o domínio é outro parâmetro. Vai ser usado pelo osciloscópio para guardar os valores da tensão
 class DummyArray(ParameterWithSetpoints):
 
-    def get_raw(self):
-        # Estou conectando um PSG diretamente na definição de uma classe. Isso vai ter que mudar, 
-        # pois a definição deve ser abrangente.
-        PSG = self.root_instrument.other_inst_connected
-        freq = PSG.freq()
-        amp =  PSG.amp()
-        t_list = self.root_instrument.t_axis.get_latest()
-        npoints = self.root_instrument.n_points.get_latest()
-        return amp*np.sin(t_list*freq)+np.random.rand(npoints)
+    def get_raw(self):    
+        npoints = self.instrument.n_points.get_latest()
+        return_value = np.random.rand(npoints)
+        if hasattr(self.instrument, 'other_inst_connected'):
+            PSG = self.instrument.other_inst_connected
+            freq = PSG.freq()
+            amp =  PSG.amp()
+            t_list = self.instrument.t_axis.get_latest()
+            return_value += amp*np.sin(t_list*freq) 
+        return return_value
 
-# Class que representa um osciloscópio
-class DummyOscilloscope(Instrument):
+class DummyOscilloscopeChannel(InstrumentChannel):
 
     def connect_inst(self,inst):
         self.other_inst_connected = inst
         
 
-    def __init__(self, name, it_start=-1,ft_stop=1, in_points=501, **kwargs):
+    def __init__(self, parent: Instrument,  name, channel, it_start=-1,ft_stop=1, in_points=501):
 
-        super().__init__(name, **kwargs)
-
-
-        # Exemplo de como adicionar parâmetros
+        super().__init__(parent, name)
+        
+       
         self.add_parameter('t_start',
                            initial_value=it_start,
                            unit='s',
                            label='t start',
-                           vals=Numbers(-1e3,1e3), # Vals é usado para validar o parâmetro, consequentemente proteje os instrumentos de alterações danosa.
-                           get_cmd=None, # Em um instrumento real, aqui seria colocado o comando SCPI, exemplo, "TEMP_INIT?"
-                           set_cmd=None) # "TEMP_INIT 0.2"
+                           vals=Numbers(-1e3,1e3),
+                           get_cmd=None,
+                           set_cmd=None)
 
         self.add_parameter('t_stop',
                            initial_value=ft_stop,
@@ -102,11 +86,11 @@ class DummyOscilloscope(Instrument):
                            get_cmd=None,
                            set_cmd=None)
 
-        # Parâmetro especial que define o eixo do tempo
+        
         self.add_parameter('t_axis',
                            unit='s',
                            label='t Axis',
-                           parameter_class=GeneratedSetPoints, # Define a classe que possui a implementação do uso de t_axis
+                           parameter_class=GeneratedSetPoints,
                            startparam=self.t_start,
                            stopparam=self.t_stop,
                            numpointsparam=self.n_points,
@@ -119,4 +103,21 @@ class DummyOscilloscope(Instrument):
                    parameter_class=DummyArray,
                    vals=Arrays(shape=(self.n_points.get_latest,)))
 
+        self.channel = channel
+    
 
+class DummyOscilloscope(Instrument):
+
+    def __init__(self, name, **kwargs):
+
+        super().__init__(name, **kwargs)
+
+        channel1 = DummyOscilloscopeChannel(self, 'ch1','ch1');
+        channel2 = DummyOscilloscopeChannel(self, 'ch2','ch2')
+        channel3 = DummyOscilloscopeChannel(self, 'ch3','ch3');
+        channel4 = DummyOscilloscopeChannel(self, 'ch4','ch4');
+
+        self.add_submodule('ch1',channel1);
+        self.add_submodule('ch2',channel2);
+        self.add_submodule('ch3',channel3);
+        self.add_submodule('ch4',channel4);
