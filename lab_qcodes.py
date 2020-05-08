@@ -28,8 +28,8 @@ class DummySignalGenerator(Instrument):
                            get_cmd=None,
                            set_cmd=None)
 
-    def signal(self,tlist):
-        return self.amp*np.sin(tlist*self.freq)
+    def signal(tlist):
+        return self.amp()*np.sin(tlist*self.freq())
         
 class GeneratedSetPoints(Parameter):   
     def __init__(self, startparam, stopparam, numpointsparam, *args, **kwargs):
