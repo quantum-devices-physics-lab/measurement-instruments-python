@@ -37,9 +37,6 @@ class DummySignalGenerator(Instrument):
                            get_cmd=None,
                            set_cmd=None)
 
-# Exemplo de como crirar um instrumento
-PSG = DummySignalGenerator("SignalGenerator")
-
 # Essa classe representa um parâmetro de conjuto de pontos. Será usado pelo osciloscópio para representar o eixo do tempo.
 class GeneratedSetPoints(Parameter):
     """
@@ -62,6 +59,7 @@ class DummyArray(ParameterWithSetpoints):
     def get_raw(self):
         # Estou conectando um PSG diretamente na definição de uma classe. Isso vai ter que mudar, 
         # pois a definição deve ser abrangente.
+        PSG = self.root_instrument.other_inst_connected
         freq = PSG.freq()
         amp =  PSG.amp()
         t_list = self.root_instrument.t_axis.get_latest()
@@ -70,6 +68,10 @@ class DummyArray(ParameterWithSetpoints):
 
 # Class que representa um osciloscópio
 class DummyOscilloscope(Instrument):
+
+    def connect_inst(self,inst):
+        self.other_inst_connected = inst
+        
 
     def __init__(self, name, it_start=-1,ft_stop=1, in_points=501, **kwargs):
 
