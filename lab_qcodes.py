@@ -46,6 +46,7 @@ class GeneratedSetPoints(Parameter):
         self._numpointsparam = numpointsparam
 
     def get_raw(self):
+        print(self._numpointsparam())
         return np.linspace(self._startparam(), self._stopparam(),
                               self._numpointsparam())
 
@@ -56,7 +57,7 @@ class DummyArray(ParameterWithSetpoints):
         return_value = np.random.rand(npoints)
         if hasattr(self.instrument, 'other_inst_connected'):
             PSG = self.instrument.other_inst_connected
-            t_list = self.instrument.t_axis.get_latest()
+            t_list = self.instrument.t_axis()
             return_value += PSG.signal(t_list)
         return return_value
 
