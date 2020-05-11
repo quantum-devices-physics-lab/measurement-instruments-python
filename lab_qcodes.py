@@ -8,9 +8,11 @@ from qcodes.instrument.channel import InstrumentChannel
 
 class DummySignalGenerator(Instrument):
     
-    def __init__(self, name,ifreq=5,iamp=-5, **kwargs):
+    def __init__(self, name,ifreq=5,iamp=-5,noise_function = np.random.rand, **kwargs):
 
         super().__init__(name, **kwargs)
+
+        self.noise_function = noise_function
         
         self.add_parameter('freq',
                            initial_value=ifreq,
@@ -36,7 +38,9 @@ class DummySignalGenerator(Instrument):
                            set_cmd=None)
 
     def signal(self,tlist):
-        return self.amp()*np.sin(tlist*self.freq()+self.phase())
+        npoints = len(tlist)
+        noise = self.noise_function(npoints)
+        return self.amp()*np.sin(tlist*self.freq()+self.phase()) + noise
         
 class GeneratedSetPoints(Parameter):   
     def __init__(self, startparam, stopparam, numpointsparam, *args, **kwargs):
@@ -46,6 +50,7 @@ class GeneratedSetPoints(Parameter):
         self._numpointsparam = numpointsparam
 
     def get_raw(self):
+        print(self._numpointsparam())
         return np.linspace(self._startparam(), self._stopparam(),
                               self._numpointsparam())
 
@@ -56,8 +61,8 @@ class DummyArray(ParameterWithSetpoints):
         return_value = np.random.rand(npoints)
         if hasattr(self.instrument, 'other_inst_connected'):
             PSG = self.instrument.other_inst_connected
-            t_list = self.instrument.t_axis.get_latest()
-            return_value += PSG.signal(t_list)
+            t_list = self.instrument.t_axis()
+            return_value = PSG.signal(t_list)
         return return_value
 
 class DummyOscilloscopeChannel(InstrumentChannel):
