@@ -26,7 +26,7 @@ class HomodyneCircuit(Circuit):
                            get_cmd=None,
                            set_cmd=None)
         self.add_parameter('fs',
-                   initial_value=10,
+                   initial_value=250,
                    unit='Hz',
                    label='frequency',
                    vals=Numbers(0,1e4),
