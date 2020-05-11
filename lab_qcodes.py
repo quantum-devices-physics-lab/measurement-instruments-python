@@ -5,7 +5,14 @@ from qcodes.instrument.base import Instrument
 from qcodes.instrument.parameter import ParameterWithSetpoints, Parameter
 from qcodes.instrument.channel import InstrumentChannel
 
-class HomodyneCircuit(Instrument):
+class Circuit(Instrument):
+    def __init__(self,name, **kwargs):
+        super().__init__(name, **kwargs)
+
+    def signal(self,tlist):
+        pass
+
+class HomodyneCircuit(Circuit):
     def __init__(self,name,RF,LO,**kwargs):
         super().__init__(name, **kwargs)
         self._RF = RF
