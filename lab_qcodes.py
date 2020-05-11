@@ -13,7 +13,37 @@ class Circuit(Instrument):
     def signal(self,tlist):
         pass
 
-
+class HomodyneCircuit(Circuit):
+    def __init__(self,name,RF,LO,**kwargs):
+        super().__init__(name, **kwargs)
+        self._RF = RF
+        self._LO = LO
+        self.add_parameter('fc',
+                           initial_value=10,
+                           unit='Hz',
+                           label='frequency',
+                           vals=Numbers(0,2000),
+                           get_cmd=None,
+                           set_cmd=None)
+        self.add_parameter('fs',
+                   initial_value=10,
+                   unit='Hz',
+                   label='frequency',
+                   vals=Numbers(0,1e4),
+                   get_cmd=None,
+                   set_cmd=None)
+         self.add_parameter('order',
+                   initial_value=10,
+                   vals=Numbers(1,20),
+                   get_cmd=None,
+                   set_cmd=None)
+            
+    def signal(self,tlist):
+        Y1 = self._RF.signal(tlist)
+        Y2 = self._LO.signal(tlist)
+        sos = sp.butter(sefl.order(), self.fc(), 'lp', fs=self.fs(), output='sos')
+        filtered = sp.sosfilt(sos, Y1*Y2)
+        return filtered
 
 
 class DummySignalGenerator(Instrument):
