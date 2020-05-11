@@ -41,7 +41,7 @@ class HomodyneCircuit(Circuit):
     def signal(self,tlist):
         Y1 = self._RF.signal(tlist)
         Y2 = self._LO.signal(tlist)
-        sos = sp.butter(sefl.order(), self.fc(), 'lp', fs=self.fs(), output='sos')
+        sos = sp.butter(self.order(), self.fc(), 'lp', fs=self.fs(), output='sos')
         filtered = sp.sosfilt(sos, Y1*Y2)
         return filtered
 
