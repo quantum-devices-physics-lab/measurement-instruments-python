@@ -13,6 +13,19 @@ class Circuit(Instrument):
     def signal(self,tlist):
         pass
 
+class DUT(Circuit):
+    def __init__(self,name, input_signal,b=[1.,1.],a=[1., 1., 1.], **kwargs):
+        super().__init__(name, **kwargs)
+        self._input = input_signal
+        self._sos = sp.tf2sos(b,a)
+        
+    def signal(self,tlist):
+        Y = self._input.signal(tlist)
+        filtered = sp.sosfilt(self._sos, Y)
+        return filtered
+
+
+
 class HomodyneCircuit(Circuit):
     def __init__(self,name,RF,LO,**kwargs):
         super().__init__(name, **kwargs)
@@ -26,7 +39,7 @@ class HomodyneCircuit(Circuit):
                            get_cmd=None,
                            set_cmd=None)
         self.add_parameter('fs',
-                   initial_value=10,
+                   initial_value=250,
                    unit='Hz',
                    label='frequency',
                    vals=Numbers(0,1e4),
