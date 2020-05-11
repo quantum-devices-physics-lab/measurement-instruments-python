@@ -8,7 +8,7 @@ from qcodes.instrument.channel import InstrumentChannel
 
 class DummySignalGenerator(Instrument):
     
-    def __init__(self, name,ifreq=5,iamp=-5,noise_function = np.random.rand, **kwargs):
+    def __init__(self, name,ifreq=5,iamp=5,noise_function = np.random.rand, **kwargs):
 
         super().__init__(name, **kwargs)
 
@@ -50,7 +50,6 @@ class GeneratedSetPoints(Parameter):
         self._numpointsparam = numpointsparam
 
     def get_raw(self):
-        print(self._numpointsparam())
         return np.linspace(self._startparam(), self._stopparam(),
                               self._numpointsparam())
 
