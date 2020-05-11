@@ -5,6 +5,26 @@ from qcodes.instrument.base import Instrument
 from qcodes.instrument.parameter import ParameterWithSetpoints, Parameter
 from qcodes.instrument.channel import InstrumentChannel
 
+class HomodyneCircuit(Instrument):
+    def __init__(self,name,RF,LO,**kwargs):
+        super().__init__(name, **kwargs)
+        self._RF = RF
+        self._LO = LO
+        self.add_parameter('fc',
+                           initial_value=10,
+                           unit='Hz',
+                           label='frequency',
+                           vals=Numbers(0,2000),
+                           get_cmd=None,
+                           set_cmd=None)
+            
+    def signal(self,tlist):
+        Y1 = self._RF.signal(tlist)
+        Y2 = self._LO.signal(tlist)
+        sos = sp.butter(10, self.fc(), 'lp', fs=250, output='sos')
+        filtered = sp.sosfilt(sos, Y1*Y2)
+        return filtered
+
 
 class DummySignalGenerator(Instrument):
     
