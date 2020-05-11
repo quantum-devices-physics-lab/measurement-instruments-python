@@ -36,7 +36,9 @@ class DummySignalGenerator(Instrument):
                            set_cmd=None)
 
     def signal(self,tlist):
-        return self.amp()*np.sin(tlist*self.freq()+self.phase())
+        npoints = len(tlist)
+        noise = np.random.rand(npoints)
+        return self.amp()*np.sin(tlist*self.freq()+self.phase()) + noise
         
 class GeneratedSetPoints(Parameter):   
     def __init__(self, startparam, stopparam, numpointsparam, *args, **kwargs):
@@ -58,7 +60,7 @@ class DummyArray(ParameterWithSetpoints):
         if hasattr(self.instrument, 'other_inst_connected'):
             PSG = self.instrument.other_inst_connected
             t_list = self.instrument.t_axis()
-            return_value += PSG.signal(t_list)
+            return_value = PSG.signal(t_list)
         return return_value
 
 class DummyOscilloscopeChannel(InstrumentChannel):
