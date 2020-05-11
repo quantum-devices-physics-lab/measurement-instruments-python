@@ -32,7 +32,7 @@ class HomodyneCircuit(Circuit):
                    vals=Numbers(0,1e4),
                    get_cmd=None,
                    set_cmd=None)
-         self.add_parameter('order',
+        self.add_parameter('order',
                    initial_value=10,
                    vals=Numbers(1,20),
                    get_cmd=None,
