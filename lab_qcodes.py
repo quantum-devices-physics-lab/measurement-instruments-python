@@ -8,9 +8,11 @@ from qcodes.instrument.channel import InstrumentChannel
 
 class DummySignalGenerator(Instrument):
     
-    def __init__(self, name,ifreq=5,iamp=-5, **kwargs):
+    def __init__(self, name,ifreq=5,iamp=-5,noise_function = np.random.rand, **kwargs):
 
         super().__init__(name, **kwargs)
+
+        self.noise_function = noise_function
         
         self.add_parameter('freq',
                            initial_value=ifreq,
@@ -37,7 +39,7 @@ class DummySignalGenerator(Instrument):
 
     def signal(self,tlist):
         npoints = len(tlist)
-        noise = np.random.rand(npoints)
+        noise = self.noise_function(npoints)
         return self.amp()*np.sin(tlist*self.freq()+self.phase()) + noise
         
 class GeneratedSetPoints(Parameter):   
