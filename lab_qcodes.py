@@ -19,6 +19,13 @@ class DummySignalGenerator(Instrument):
                            vals=Numbers(0,2000),
                            get_cmd=None,
                            set_cmd=None)
+
+        self.add_parameter('phase',
+                           initial_value = 0,
+                           unit = 'rad',
+                           vals=Numbers(0,np.pi),
+                           get_cmd=None,
+                           set_cmd=None)
         
         self.add_parameter('amp',
                            initial_value=iamp,
@@ -29,7 +36,7 @@ class DummySignalGenerator(Instrument):
                            set_cmd=None)
 
     def signal(self,tlist):
-        return self.amp()*np.sin(tlist*self.freq())
+        return self.amp()*np.sin(tlist*self.freq()+self.phase())
         
 class GeneratedSetPoints(Parameter):   
     def __init__(self, startparam, stopparam, numpointsparam, *args, **kwargs):
