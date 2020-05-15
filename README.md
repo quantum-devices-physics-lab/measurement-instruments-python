@@ -27,3 +27,12 @@ python -m ipykernel install --user --name qcodes --display-name "QCodes Env"
 
 Pronto! Basta iniciar o jupyter lab e escolher o kernel "QCodes Env"
 
+
+#### Realtime plot
+
+Instale jupyterplot com pip
+
+```bash
+pip install jupyterplot
+```
+
