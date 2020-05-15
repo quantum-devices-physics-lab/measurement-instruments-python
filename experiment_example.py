@@ -56,8 +56,8 @@ station.add_component(osc)
 # Criar um database
 initialise_or_create_database_at("~/teste.db")
 
-exp = load_or_create_experiment(experiment_name='osc outro dut 2',
-                                sample_name="osc outro dut teste background")
+exp = load_or_create_experiment(experiment_name='osc realtime intro 2',
+                                sample_name="osc realtime 1")
 
 def calculateGain():
     Y = osc.ch3.wavesample()
@@ -80,7 +80,7 @@ meas.register_parameter(gain, setpoints=[PSG1.freq])
 
 with meas.run(write_in_background=True) as datasaver:
     for aFreq in np.linspace(1,500,500):
-        time.delay(1)
+        time.sleep(1)
         PSG1.freq(aFreq)
         PSG2.freq(aFreq)
         datasaver.add_result((gain, gain()), (PSG1.freq, PSG1.freq()))
