@@ -1,5 +1,6 @@
 import numpy as np
 import os
+import time
 from qcodes import Station
 from qcodes.instrument.specialized_parameters import ElapsedTimeParameter
 from qcodes.dataset.plotting import plot_dataset
@@ -79,6 +80,7 @@ meas.register_parameter(gain, setpoints=[PSG1.freq])
 
 with meas.run(write_in_background=True) as datasaver:
     for aFreq in np.linspace(1,500,500):
+        time.delay(1)
         PSG1.freq(aFreq)
         PSG2.freq(aFreq)
         datasaver.add_result((gain, gain()), (PSG1.freq, PSG1.freq()))
