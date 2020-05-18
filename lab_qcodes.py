@@ -106,7 +106,7 @@ class GeneratedSetPoints(Parameter):
         return np.linspace(self._startparam(), self._stopparam(),
                               self._numpointsparam())
 
-class DummyArray(ParameterWithSetpoints):
+class DummyArraySignal(ParameterWithSetpoints):
 
     def get_raw(self):    
         npoints = self.instrument.n_points.get_latest()
@@ -165,7 +165,7 @@ class DummyOscilloscopeChannel(InstrumentChannel):
                    unit='V',
                    setpoints=(self.t_axis,),
                    label='Wavesample',
-                   parameter_class=DummyArray,
+                   parameter_class=DummyArraySignal,
                    vals=Arrays(shape=(self.n_points.get_latest,)))
 
         self.channel = channel
