@@ -15,9 +15,9 @@ class Circuit(Instrument):
 
 class DUT(Circuit):
     def function_amp(self,freq):
-        #f = lambda x: (self._sigma/2)/((x-self._omega0)**2+(self._sigma/2)**2)/np.pi
-        f = lambda x: np.exp(-(x-self.omega0())**2/(2*self.sigma()**2))
-        y = f(freq)
+        f = lambda x: (self.sigma()/2)/((x-self.omega0())**2+(self.sigma()/2)**2)/np.pi
+        #f = lambda x: np.exp(-(x-self.omega0())**2/(2*self.sigma()**2))
+        y = f(freq)/f(self.omega0())
         y = 1-0.9*y
         return y
     
