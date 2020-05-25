@@ -71,7 +71,7 @@ class DummySignalGenerator(Instrument):
                            initial_value=ifreq,
                            unit='Hz',
                            label='frequency',
-                           vals=Numbers(0,2000),
+                           vals=Numbers(0,20e9),
                            get_cmd=None,
                            set_cmd=None)
 
@@ -147,7 +147,7 @@ class DummyOscilloscopeChannel(InstrumentChannel):
         self.add_parameter('n_points',
                            unit='',
                            initial_value=in_points,
-                           vals=Numbers(1,5e4),
+                           vals=Numbers(1,50e6),
                            get_cmd=None,
                            set_cmd=None)
 
