@@ -22,7 +22,8 @@ class DUT(Circuit):
         return y
     
     def function_phase(self,freq):
-        return 0
+        f = lambda x: np.arctan((x-self.omega0())/(self.sigma()/2))/np.pi+1/2
+        return f(freq)
         
     def __init__(self,name, input_signal,iomega0=100,isigma=1, **kwargs):
         super().__init__(name, **kwargs)
@@ -52,7 +53,7 @@ class DUT(Circuit):
         npoints = len(tlist)
         noise = self._input.noise_function(npoints)
         
-        Y = amp*self.function_amp(freq)*np.sin(tlist*freq+self.function_phase(freq)*phase) + noise
+        Y = amp*self.function_amp(freq)*np.sin(tlist*freq+self.function_phase(freq)+phase) + noise
         
         return Y
 
