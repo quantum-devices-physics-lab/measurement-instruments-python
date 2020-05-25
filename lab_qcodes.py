@@ -14,15 +14,29 @@ class Circuit(Instrument):
         pass
 
 class DUT(Circuit):
-    def __init__(self,name, input_signal,b=[1.,1.],a=[1., 1., 1.], **kwargs):
+    def function_amp(freq,omega0):
+        sigma = 1
+        return 1-0.9*np.exp(-(freq-omega0)**2/(2*sigma**2))
+    def function_phase(freq):
+        return 0
+        
+    def __init__(self,name, input_signal,omega0= 100,ampf=function_amp,phasef=function_phase, **kwargs):
         super().__init__(name, **kwargs)
+        self._omega0 = omega0
         self._input = input_signal
-        self._sos = sp.tf2sos(b,a)
+        self._ampf = ampf
+        self._phasef = phasef
         
     def signal(self,tlist):
-        Y = self._input.signal(tlist)
-        filtered = sp.sosfilt(self._sos, Y)
-        return filtered
+        freq = self._input.freq()
+        amp = self._input.amp()
+        phase = self._input.phase()
+        npoints = len(tlist)
+        noise = self._input.noise_function(npoints)
+        
+        Y = amp*self._ampf(freq,self._omega0)*np.sin(tlist*freq+self._phasef(freq)*phase) + noise
+        
+        return Y
 
 
 
@@ -71,7 +85,7 @@ class DummySignalGenerator(Instrument):
                            initial_value=ifreq,
                            unit='Hz',
                            label='frequency',
-                           vals=Numbers(0,2000),
+                           vals=Numbers(0,20e9),
                            get_cmd=None,
                            set_cmd=None)
 
@@ -147,7 +161,7 @@ class DummyOscilloscopeChannel(InstrumentChannel):
         self.add_parameter('n_points',
                            unit='',
                            initial_value=in_points,
-                           vals=Numbers(1,5e4),
+                           vals=Numbers(1,50e6),
                            get_cmd=None,
                            set_cmd=None)
 
