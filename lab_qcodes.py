@@ -14,18 +14,36 @@ class Circuit(Instrument):
         pass
 
 class DUT(Circuit):
-    def function_amp(freq,omega0):
-        sigma = 1
-        return 1-0.9*np.exp(-(freq-omega0)**2/(2*sigma**2))
-    def function_phase(freq):
+    def function_amp(self,freq):
+        f = lambda x: (self.sigma()/2)/((x-self.omega0())**2+(self.sigma()/2)**2)/np.pi
+        #f = lambda x: np.exp(-(x-self.omega0())**2/(2*self.sigma()**2))
+        y = f(freq)/f(self.omega0())
+        y = 1-0.9*y
+        return y
+    
+    def function_phase(self,freq):
         return 0
         
-    def __init__(self,name, input_signal,omega0= 100,ampf=function_amp,phasef=function_phase, **kwargs):
+    def __init__(self,name, input_signal,iomega0=100,isigma=1, **kwargs):
         super().__init__(name, **kwargs)
-        self._omega0 = omega0
+        
+        self.add_parameter('omega0',
+                           initial_value=iomega0,
+                           unit='Hz',
+                           label='frequency',
+                           vals=Numbers(0,20e9),
+                           get_cmd=None,
+                           set_cmd=None)
+        
+        self.add_parameter('sigma',
+                           initial_value=isigma,
+                           unit='Hz',
+                           label='FWHM',
+                           vals=Numbers(0,20e9),
+                           get_cmd=None,
+                           set_cmd=None)
+        
         self._input = input_signal
-        self._ampf = ampf
-        self._phasef = phasef
         
     def signal(self,tlist):
         freq = self._input.freq()
@@ -34,7 +52,7 @@ class DUT(Circuit):
         npoints = len(tlist)
         noise = self._input.noise_function(npoints)
         
-        Y = amp*self._ampf(freq,self._omega0)*np.sin(tlist*freq+self._phasef(freq)*phase) + noise
+        Y = amp*self.function_amp(freq)*np.sin(tlist*freq+self.function_phase(freq)*phase) + noise
         
         return Y
 
