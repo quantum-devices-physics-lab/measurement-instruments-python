@@ -16,7 +16,7 @@ class Circuit(Instrument):
 class DUT(Circuit):
     def function_amp(self,freq):
         #f = lambda x: (self._sigma/2)/((x-self._omega0)**2+(self._sigma/2)**2)/np.pi
-        f = lambda x: np.exp(-(x-self._omega0)**2/(2*self._sigma**2))
+        f = lambda x: np.exp(-(x-self.omega0())**2/(2*self.sigma()**2))
         y = f(freq)
         y = 1-0.9*y
         return y
@@ -24,10 +24,24 @@ class DUT(Circuit):
     def function_phase(self,freq):
         return 0
         
-    def __init__(self,name, input_signal,omega0= 100, **kwargs):
+    def __init__(self,name, input_signal,iomega0=100,isigma=1, **kwargs):
         super().__init__(name, **kwargs)
-        self._omega0 = omega0
-        self._sigma = 1
+        
+        self.add_parameter('omega0',
+                           initial_value=iomega0,
+                           unit='Hz',
+                           label='frequency',
+                           vals=Numbers(0,20e9),
+                           get_cmd=None,
+                           set_cmd=None)
+        
+        self.add_parameter('sigma',
+                           initial_value=isigma,
+                           unit='Hz',
+                           label='FWHM',
+                           vals=Numbers(0,20e9),
+                           get_cmd=None,
+                           set_cmd=None)
         
         self._input = input_signal
         
