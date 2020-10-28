@@ -14,6 +14,7 @@ exp = ot.One_tone()
 #the method print_setup() will show these values too
 exp.freq_range([10,50])
 exp.ampl(8)
+exp.freq_time(0.02)
 
 #loads the experiment graph screen
 #loading another will create another window but the graphs only plot on the last window
@@ -32,4 +33,5 @@ exp.ampl(11)
 #to plot it in other window run the method graph_window()  
 exp.run()
 
+#this is because in the script the graph windows closes automatically
 input("Enter anything to close\n")

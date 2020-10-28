@@ -4,31 +4,27 @@ from datetime import datetime
 
 #para plotar o grafico em real time
 import matplotlib.pyplot as plt
-import matplotlib.animation as animation
-from matplotlib import style
-#style.use('fivethirtyeight')
 
 import numpy as np
-import qcodes as qc
 from qcodes import (
     Measurement,
     experiments,
     initialise_or_create_database_at,
     load_or_create_experiment,
+    Station
 )
-from qcodes.dataset.plotting import plot_dataset
 from qcodes.logger.logger import start_all_logging
 from qcodes.tests.instrument_mocks import DummyInstrument
 from qcodes.instrument.parameter import Parameter
 
-#globals().clear()
 #api prototype
 #this class will be supposed to execute the tasks above and serve
 #as an api that you can import in a python instance or file and execute
 class One_tone:
-    def __init__(self, database="./OneTone.db"):
+    def __init__(self, database="./OneTone.db", exp_name="One_Tone"):
             #sets the defaults values
             self.database=database
+            self.exp_name=exp_name
             self.range=[0,60]
             self.samples=120
             self.amp=5
@@ -70,10 +66,6 @@ class One_tone:
             fig = plt.figure()
             self.ax1 = fig.add_subplot()
             print("Window set up, run experiments to draw graphs")
-
-    #loads an experiment to add the data to it instead of the one created automatically
-    def load_exp(self):
-            print ("exp loaded")
 
     def list_exps(self):
             exps=experiments()
@@ -143,12 +135,12 @@ class One_tone:
     def print_setup(self):
         print("freq_range",self.range, "Hz | ampl", self.amp,
                   "V ")
-        print("freq_time",self.Freq_time,"s")
+        print("freq_time",self.Freq_time,"s\n")
     
     #sets up the qcodes code to run the experiment
     def set_qcodes(self):
          initialise_or_create_database_at(self.database)
-         self.station = qc.Station()
+         self.station = Station()
 
          #### instruments needs change
          # A dummy instrument dac with two parameters ch1 and ch2
@@ -168,7 +160,7 @@ class One_tone:
          print(now)
          #the experiment is a unit of data inside the database it's made 
          #out 
-         self.exp = load_or_create_experiment(experiment_name='One Tone',
+         self.exp = load_or_create_experiment(experiment_name=self.exp_name,
                                 sample_name=now)
 
          self.dmm.v1 = dmm_parameter('dmm_v1', self.dac)
@@ -181,7 +173,7 @@ class One_tone:
 ###############################################################
 
 #in this class is defined the simulated behavior of the osciloscope entrance
-class dmm_parameter(qc.Parameter):
+class dmm_parameter(Parameter):
     def __init__(self, name, dac):
         super().__init__(name)
         #assingns the generator to self.ed
