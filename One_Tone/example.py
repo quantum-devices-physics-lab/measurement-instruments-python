@@ -12,7 +12,7 @@ exp = ot.One_tone()
 
 #using the names on the print out of the default setup one can change it, paying attention to the formats
 #the method print_setup() will show these values too
-exp.freq_range([10,50])
+exp.freq_range([10,50]) #[initial, final]
 exp.ampl(8)
 exp.freq_time(0.02)
 
@@ -31,6 +31,10 @@ exp.ampl(11)
 #and we run it again
 #this will plot the experiment in the same window 
 #to plot it in other window run the method graph_window()  
+exp.run()
+
+#another window with another run
+exp.graph_window()
 exp.run()
 
 #this is because in the script the graph windows closes automatically
