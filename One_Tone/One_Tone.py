@@ -23,57 +23,57 @@ from qcodes.instrument.parameter import Parameter
 class One_tone:
     def __init__(self, database="./OneTone.db", exp_name="One_Tone"):
             #sets the defaults values
-            self.database=database
-            self.exp_name=exp_name
-            self.amp=5
+            self.__database=database
+            self.__exp_name=exp_name
+            self.__amp=5
 
-            self.range=[0,60]
-            self.samples=120
-            self.Freq_time=0.001
+            self.__range=[0,60]
+            self.__samples=120
+            self.__freq_time=0.001
 
-            self.amplitude_range=[6,12]
-            self.amplitude_samples=12
+            self.__amplitude_range=[6,12]
+            self.__amplitude_samples=12
 
-            self.colors=['b','g','r','c','m','y','k']
-            self.colorN=0
-            self.ax1=None  #to share the graph screen through the class
+            self.__colors=['b','g','r','c','m','y','k']
+            self.__colorN=0
+            self.__ax1=None  #to share the graph screen through the class
            
 
-            self.set_qcodes()
+            self.__set_qcodes()
            #print defaults
-            print("database", self.database)
+            print("database", self.__database)
             self.print_setup()
 
 ###### methods to change the experiment setup values #################
 
 #the max and min frequency sweeped by the experiment
     def freq_range(self, interval):
-            self.range=interval
+            self.__range=interval
             self.print_setup()
 
 #the max and min frequency sweeped by the experiment
     def amp_range(self, interval):
-            self.amplitude_range=interval
+            self.__amplitude_range=interval
             self.print_setup()
 
 #amp of the input signal of the experiment
     def amp_samples(self, number):
-            self.amplitude_samples=number
+            self.__amplitude_samples=number
             self.print_setup()
 
 #amp of the input signal of the experiment
     def freq_samples(self, number):
-            self.samples=number
+            self.__samples=number
             self.print_setup()
 
 #amp of the input signal of the experiment
     def ampl(self, voltage):
-            self.amp=voltage
+            self.__amp=voltage
             self.print_setup()
            
     #the time that the sweep stays at each frequency    
     def freq_time(self, interval):
-            self.Freq_time=interval
+            self.__freq_time=interval
             self.print_setup()
 
 
@@ -83,8 +83,8 @@ class One_tone:
     def graph_window(self):
             #plot axis to make the points appear in the same graph
             plt.ion()
-            fig = plt.figure()
-            self.ax1 = fig.add_subplot()
+            self.__fig = plt.figure()
+            self.__ax1 = self.__fig.add_subplot()
             print("Window set up, run experiments to draw graphs")
 
     def list_exps(self):
@@ -95,7 +95,7 @@ class One_tone:
             print ("database loaded")
 
     #starts experiment
-    def run(self, graph=True, amp=-1):
+    def run(self, graph=True, amp=-1, legend=True):
             dac=self.dac
             dmm=self.dmm
             exp=self.exp
@@ -103,7 +103,8 @@ class One_tone:
 
         #selects between amp set previously or set in the run call
             if (amp==-1):
-                dac.amp(self.amp)
+                dac.amp(self.__amp)
+                amp=self.__amp
             else:
                 dac.amp(amp)
 
@@ -115,18 +116,20 @@ class One_tone:
             meas.write_period = 2 
 
             #plot lables 
-            if (self.ax1 != None and graph  ):
-                self.ax1.set_xlabel("Frequency")
-                self.ax1.set_ylabel("Amplitude measured")
-                title='One Tone Spectroscopy with sweep in '+str(amp)+'_Volts'
-                self.ax1.set_title(title)
+            if (self.__ax1 != None and graph  ):
+                self.__ax1.set_xlabel("Frequency")
+                self.__ax1.set_ylabel("Amplitude measured")
+                title='One Tone Spectroscopy sweeping the frequency'
+                self.__ax1.set_title(title)
+                #sets legend with amplitude for each plot to appear
+                first=legend
             #vectors for plotting
             Y = [] 
             X = []
 
             with meas.run() as datasaver:
                 #np.linspace is the interval and number of points in the osciloscope
-                for set_v in np.linspace(self.range[0], self.range[1], self.samples):
+                for set_v in np.linspace(self.__range[0], self.__range[1], self.__samples):
                     #sets dac ch1 with the set_v value and gets value from v1
                     dac.freq.set(set_v)
                     get_v = dmm.v1.get()
@@ -135,21 +138,27 @@ class One_tone:
                                          (dmm.v1, get_v))
             
                     #stays in one freq so that the osciloscope can measure the necessary
-                    sleep(self.Freq_time/10)
+                    sleep(self.__freq_time/10)
 
                     #plots graph in real time
 
                     #checks if there is a canvas to plot in
-                    if (self.ax1 != None and graph):
+                    if (self.__ax1 != None and graph):
                         #gets data from dataset to plot
                         X.append(set_v)
                         Y.append(get_v) 
                        #plots data with color from array picked by number 
-                        self.ax1.plot(X, Y,c=self.colors[self.colorN])
+                        self.__ax1.plot(X, Y,c=self.__colors[self.__colorN])
+                        #plots once with a label and the legend for it
+                        if(first):
+                            self.__ax1.plot(X, Y,c=self.__colors[self.__colorN], label='Amplitude '+str(self.__amp)+'V')
+                            plt.legend(loc='lower right')
+                            first=False
+
                         plt.pause(0.01)
             
                 #changes color of plot for next time
-                self.colorN=(self.colorN+1)%7
+                self.__colorN=(self.__colorN+1)%7
                 #adds the amplitude to the dataset as well
                 datasaver.add_result((dac.amp, dac.amp()))
             
@@ -171,23 +180,25 @@ class One_tone:
             
             meas.write_period = 2 
 
-            if (self.ax1 != None and graph  ):
-                self.ax1.set_xlabel("Frequency of input")
-                self.ax1.set_ylabel("Amplitude of input")
-                self.ax1.set_title('One Tone Spectroscopy with double sweep')
+            if (self.__ax1 != None and graph  ):
+                self.__ax1.set_xlabel("Frequency of input")
+                self.__ax1.set_ylabel("Amplitude of input")
+                self.__ax1.set_title('One Tone Spectroscopy with double sweep')
+                colorbar=False
+
             #vectors for plotting
             Y = [] 
             X = []
             C = []
             column=-1
             with meas.run() as datasaver:
-                for set_v in np.linspace(self.amplitude_range[0], self.amplitude_range[1], self.amplitude_samples):
-                    if (self.ax1 != None and graph  ):
+                for set_v in np.linspace(self.__amplitude_range[0], self.__amplitude_range[1], self.__amplitude_samples):
+                    if (self.__ax1 != None and graph  ):
                          C.append([])
                          column+=1
                          Y.append(set_v) 
                     dac.amp(set_v)
-                    for set_f in np.linspace(self.range[0], self.range[1], self.samples):
+                    for set_f in np.linspace(self.__range[0], self.__range[1], self.__samples):
                         #sets dac ch1 with the set_v value and gets value from v1
                         dac.freq.set(set_f)
                         get_v = dmm.v1.get()
@@ -197,26 +208,28 @@ class One_tone:
                                              (dmm.v1, get_v))
             
                         #stays in one freq so that the osciloscope can measure the necessary
-                        sleep(self.Freq_time)
+                        sleep(self.__freq_time)
 
                         #plots graph in real time
 
                         #checks if there is a canvas to plot in
-                        if (self.ax1 != None and graph  ):
+                        if (self.__ax1 != None and graph  ):
                             #gets data from dataset to plot
                             X.append(set_f)
                             C[column].append(get_v)
-                            self.C=C
-                            self.X=X
-                            self.Y=Y
+
                            #plots data with color from array picked by number 
                     #the pcolor doesn't do well with imcomplete lines/columns alongside imcomplete ones so it' at the end of the main loop 
-                    if (self.ax1 != None and graph  ):
-                        self.ax1.pcolor(X, Y, C)
+                    if (self.__ax1 != None and graph  ):
+                        #removes repeated colorbars
+                        if(colorbar):
+                            colorbar.remove()
+                        graph_colors=self.__ax1.pcolor(X, Y, C)
+                        colorbar= self.__fig.colorbar(graph_colors, ax=self.__ax1)
                         plt.pause(0.01)
                         X=[]
                 #changes color of plot for next time
-                self.colorN=(self.colorN+1)%7
+                self.__colorN=(self.__colorN+1)%7
                 #adds the amplitude to the dataset as well
                 datasaver.add_result((dac.amp, dac.amp()))
             
@@ -227,12 +240,12 @@ class One_tone:
 
     #prints the experiment setup values        
     def print_setup(self):
-        print("freq_range",self.range, "Hz | freq_samples", self.samples, "|freq_time", self.Freq_time,"|ampl", self.amp,"V\n ")
-        print("amp_range",self.amplitude_range, "V | amp_samples", self.amplitude_samples, "\n")
+        print("freq_range",self.__range, "Hz | freq_samples", self.__samples, "|freq_time", self.__freq_time,"|ampl", self.__amp,"V\n ")
+        print("amp_range",self.__amplitude_range, "V | amp_samples", self.__amplitude_samples, "\n")
     
     #sets up the qcodes code to run the experiment
-    def set_qcodes(self):
-         initialise_or_create_database_at(self.database)
+    def __set_qcodes(self):
+         initialise_or_create_database_at(self.__database)
          self.station = Station()
 
          #### instruments needs change
@@ -253,7 +266,7 @@ class One_tone:
          print(now)
          #the experiment is a unit of data inside the database it's made 
          #out 
-         self.exp = load_or_create_experiment(experiment_name=self.exp_name,
+         self.exp = load_or_create_experiment(experiment_name=self.__exp_name,
                                 sample_name=now)
 
          self.dmm.v1 = dmm_parameter('dmm_v1', self.dac)
