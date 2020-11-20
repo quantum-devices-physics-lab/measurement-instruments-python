@@ -12,9 +12,9 @@ exp = ot.One_tone()
 
 #using the names on the print out of the default setup one can change it, paying attention to the formats
 #the method print_setup() will show these values too
-exp.freq_range([10,50]) #[initial, final]
-exp.ampl(8)
-exp.freq_time(0.02)
+exp.freq_range=[10,50] #[initial, final]
+exp.ampl=8
+exp.freq_time=0.02
 
 #loads the experiment graph screen
 #loading another will create another window but the graphs only plot on the last window
@@ -26,7 +26,7 @@ exp.run()
 
 
 #now we increase the amp and thus the power to obtain the punched out graph with the qubit on the excited state
-exp.ampl(11)
+exp.ampl=11
 
 #and we run it again
 #this will plot the experiment in the same window 

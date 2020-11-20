@@ -25,8 +25,8 @@ class One_tone:
             #sets the defaults values
             self.__database=database
             self.__exp_name=exp_name
-            self.__amp=5
 
+            self.__amp=5
             self.__range=[0,60]
             self.__samples=120
             self.__freq_time=0.001
@@ -44,34 +44,87 @@ class One_tone:
             print("database", self.__database)
             self.print_setup()
 
+    def help():
+        print("To print the variables for the setup use the method print_setup()\
+        In this function output you can see the methods that change each setup variable and their current values.\
+                    Call each of these methods in order to change their corresponding values. \n\
+                    Methods:\n\
+                        print_setup()   prints the current setup of the experiment\n\
+        \n\
+                        For variables:\n\
+                              freq_range=interval  the range of the sweep frequency from beggining to end in the form interval =[beggining, end]\n\
+                              amp_range=interval   the range of the sweep amplitude for the double sweep method from beggining to end in the form interval =[beggining, end]\n\
+                                freq_samples=number  the number of samples in the  for the frequency with number=integer  \n\
+                                amp_samples=number   the number of samples in the double sweep for the amplitude with number=integer \n\
+                                ampl(voltage)         the amplitude for a single sweep in the run() method \n\
+                                freq_time=interval   the time duration at which each frequency stays during the sweep step \n\
+        \
+                        graph_window()         opens a window to graph one or more runs. You can open more than one window and the runs will always graph on the last window\n\
+        \
+                        run(graph=True, amp=-1, legend=True)        runs the experiment saving the data to the qcodes database and if graph is True(default) and there is a window open graphs the output too. amp if positive will change the amplitude for the run and legend turns on off the legend in the graph useful for multiple plots in the same window.\n\
+        \
+                        double_sweep(graph=True)                   same as run but sweeps both frequency and amplitude and if graph is True and there is a window graphs a pcolor with the data collected. \n\
+        ")
 ###### methods to change the experiment setup values #################
 
 #the max and min frequency sweeped by the experiment
+#getter of the function  exp.freq_range  returns output
+    @property
+    def freq_range(self):
+            return self.__range
+
+#setter of the function use exp.freq_range=value 
+    @freq_range.setter
     def freq_range(self, interval):
             self.__range=interval
             self.print_setup()
 
 #the max and min frequency sweeped by the experiment
+    @property
+    def amp_range(self):
+            return self.__amplitude_range
+        
+    @amp_range.setter
     def amp_range(self, interval):
             self.__amplitude_range=interval
             self.print_setup()
 
 #amp of the input signal of the experiment
+    @property
+    def amp_samples(self):
+            return self.__amplitude_samples
+        
+    @amp_samples.setter
     def amp_samples(self, number):
             self.__amplitude_samples=number
             self.print_setup()
 
 #amp of the input signal of the experiment
+    @property
+    def freq_samples(self):
+            return self.__samples
+        
+    @freq_samples.setter
     def freq_samples(self, number):
             self.__samples=number
             self.print_setup()
 
 #amp of the input signal of the experiment
+    @property
+    def ampl(self):
+            return self.__amp
+        
+    @ampl.setter
     def ampl(self, voltage):
             self.__amp=voltage
             self.print_setup()
            
     #the time that the sweep stays at each frequency    
+    @property
+    def freq_time(self):
+            return self.__freq_time
+        
+    @freq_time.setter
     def freq_time(self, interval):
             self.__freq_time=interval
             self.print_setup()
@@ -240,8 +293,8 @@ class One_tone:
 
     #prints the experiment setup values        
     def print_setup(self):
-        print("freq_range",self.__range, "Hz | freq_samples", self.__samples, "|freq_time", self.__freq_time,"|ampl", self.__amp,"V\n ")
-        print("amp_range",self.__amplitude_range, "V | amp_samples", self.__amplitude_samples, "\n")
+        print("freq_range",self.__range, "Hz | freq_samples", self.__samples, "|freq_time", self.__freq_time,"|ampl", self.__amp,"V")
+        print("amp_range",self.__amplitude_range, "V | amp_samples", self.__amplitude_samples)
     
     #sets up the qcodes code to run the experiment
     def __set_qcodes(self):
