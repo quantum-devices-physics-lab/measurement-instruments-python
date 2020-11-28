@@ -1,0 +1,18 @@
+
+pip install PySimpleGUI
+or
+pip3 install PySimpleGUI
+
+pip install PySide2
+or
+pip3 install PySide2
+
+pip install --upgrade PySimpleGUIQt  
+or
+pip3 install --upgrade --no-cache-dir PySimpleGUIQt
+
+pip install -U matplotlib
+or
+pip3 install -U matplotlib
+
+https://qcodes.github.io/Qcodes/start/index.html

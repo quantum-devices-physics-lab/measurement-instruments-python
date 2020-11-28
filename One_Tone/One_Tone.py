@@ -138,6 +138,7 @@ class One_tone:
             plt.ion()
             self.__fig = plt.figure()
             self.__ax1 = self.__fig.add_subplot()
+            #plt.show(block=False)
             print("Window set up, run experiments to draw graphs")
 
     def list_exps(self):
@@ -234,9 +235,10 @@ class One_tone:
             meas.write_period = 2 
 
             if (self.__ax1 != None and graph  ):
-                self.__ax1.set_xlabel("Frequency of input")
-                self.__ax1.set_ylabel("Amplitude of input")
+                self.__ax1.set_xlabel("Frequency of input (Hz)")
+                self.__ax1.set_ylabel("Amplitude of input (V)")
                 self.__ax1.set_title('One Tone Spectroscopy with double sweep')
+
                 colorbar=False
 
             #vectors for plotting
@@ -279,6 +281,7 @@ class One_tone:
                             colorbar.remove()
                         graph_colors=self.__ax1.pcolor(X, Y, C)
                         colorbar= self.__fig.colorbar(graph_colors, ax=self.__ax1)
+                        colorbar.set_label('Amplitude of output (V)', rotation=270, labelpad=15)
                         plt.pause(0.01)
                         X=[]
                 #changes color of plot for next time
