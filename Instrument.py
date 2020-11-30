@@ -100,6 +100,9 @@ class Instrument:
         
     def write(self,command):
         return self._inst.write(command)
+    
+    def write_raw(self,commad):
+        return self._inst.write_raw(commad)
         
     def query(self,command):
         return self._inst.query(command)
@@ -112,6 +115,48 @@ class Instrument:
     
     def close(self):
         return self._inst.close()
+    
+class AWG(Instrument):
+    def __init__(self, address, alias):
+        super().__init__(address,alias)
+        
+    def _convertToByte(self,data, A):
+
+        np.clip(data, -A, A, data)
+
+        size = 256 * (1 + divmod(len(data) - 1, 256)[0])
+        
+        y = np.zeros(size, dtype=np.int8)
+        y[:len(data)] = np.array(127 * data / A, dtype=np.int8)
+        return y
+    
+    def loadWaveform(self,data):
+        self.convertedData = self._convertToByte(data,self.Vamp)
+        
+        
+    def sendWaveform(self,ch,seq):
+        data = self.convertedData
+        n_elem = len(data)
+        self.write(':TRAC{}:DEF 1,{}'.format(ch, n_elem))
+        # create binary data as bytes with header
+        start, length = 0, len(data)
+        sLen = b'%d' % length
+        sHead = b'#%d%s' % (len(sLen), sLen)
+        # send to AWG
+        sCmd = b':TRAC%d:DATA %d,%d,' % (ch, seq, start)
+        self.write_raw(sCmd + sHead + data[start:start+length].tobytes())
+        
+    def start(self):
+        self.write('INIT:IMM')
+        
+    def stop(self):
+        self.write(':ABOR')
+        
+    def enableCh(self,ch):
+        self.write(":OUTP%d ON" % ch)
+        
+    def disableCh(self,ch):
+        self.write(":OUTP%d OFF" % ch)
     
 class Attenuator(Instrument):
     def __init__(self,address,alias):
