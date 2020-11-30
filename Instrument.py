@@ -4,7 +4,7 @@ import time
 
 rm = visa.ResourceManager()
 
-
+#TODO setter do Attenuator não consegue adicionar db de 100
 
 
 # Wrap phase______________
@@ -171,6 +171,7 @@ class Attenuator(Instrument):
         u = int(self.query("ATTenuator:BANK1:X?").split("\n")[0])
         self._attenuation = d+u
         return self._attenuation
+    
     
     @attenuation.setter
     def attenuation(self,att):
