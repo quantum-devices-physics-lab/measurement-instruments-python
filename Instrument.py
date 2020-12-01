@@ -119,6 +119,9 @@ class Instrument:
 class AWG(Instrument):
     def __init__(self, address, alias):
         super().__init__(address,alias)
+        self.stop()
+        self.write(":INST:DACM SING")
+        self.write(":INST:MEM:EXT:RDIV DIV1")
         
     def _convertToByte(self,data, A):
 
@@ -160,6 +163,9 @@ class AWG(Instrument):
         
     def disableCh(self,ch):
         self.write(":OUTP%d OFF" % ch)
+        
+
+        
     
 class Attenuator(Instrument):
     def __init__(self,address,alias):
