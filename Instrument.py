@@ -164,8 +164,18 @@ class AWG(Instrument):
     def disableCh(self,ch):
         self.write(":OUTP%d OFF" % ch)
         
-
+    def setTriggerToContinuous(self):
+        self.write(":INIT:CONT ON")
         
+    def setTriggerToGated(self):
+        self.write(":INIT:GATE ON")
+        
+    def setTriggerToTriggered(self):
+        self.write(":INIT:CONT OFF")
+        self.write(":INIT:GATE OFF")
+        
+    def forceTrigger(self):
+        awg.write(":TRIG:BEG")
     
 class Attenuator(Instrument):
     def __init__(self,address,alias):
