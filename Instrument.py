@@ -153,15 +153,27 @@ class AWG(Instrument):
         self.write_raw(sCmd + sHead + data[start:start+length].tobytes())
         
     def start(self):
+        '''
+        Start signal generation on all channels. 
+        '''
         self.write('INIT:IMM')
         
     def stop(self):
+        '''
+        Stop signal generation on all channels
+        '''
         self.write(':ABOR')
         
     def enableCh(self,ch):
+        '''
+        Switch the amplifier of the output path for a channel on.
+        '''
         self.write(":OUTP%d ON" % ch)
         
     def disableCh(self,ch):
+        '''
+        Switch the amplifier of the output path for a channel off.
+        '''
         self.write(":OUTP%d OFF" % ch)
     
     def getTriggerMode(self):
@@ -203,7 +215,7 @@ class AWG(Instrument):
         self.write(":TRIG:BEG")
         
     @property
-    def sampleFrequency(self):
+    def sampleRate(self):
         '''
             Set or query the sample frequency of the output DAC. 
         
@@ -212,7 +224,7 @@ class AWG(Instrument):
     
     
     @sampleFrequency.setter
-    def sampleFrequency(self,freq):
+    def sampleRate(self,freq):
         '''
             Set or query the sample frequency of the output DAC. 
         '''
