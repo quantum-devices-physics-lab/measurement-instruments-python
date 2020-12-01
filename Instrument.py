@@ -133,11 +133,14 @@ class AWG(Instrument):
     def loadWaveform(self,data):
         self.convertedData = self._convertToByte(data,self.Vamp)
         
+    def clearWaveform(self,ch,seq):
+        self.write(":TRAC{}:DEL {}".format(ch,seq));
         
     def sendWaveform(self,ch,seq):
         data = self.convertedData
         n_elem = len(data)
-        self.write(':TRAC{}:DEF 1,{}'.format(ch, n_elem))
+        
+        self.write(':TRAC{}:DEF {},{},0'.format(ch,seq, n_elem))
         # create binary data as bytes with header
         start, length = 0, len(data)
         sLen = b'%d' % length
