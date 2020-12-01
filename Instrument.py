@@ -223,7 +223,7 @@ class AWG(Instrument):
         return float(self.query(":FREQ:RAST?")[:-1])
     
     
-    @sampleFrequency.setter
+    @sampleRate.setter
     def sampleRate(self,freq):
         '''
             Set or query the sample frequency of the output DAC. 
