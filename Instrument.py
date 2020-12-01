@@ -175,7 +175,7 @@ class AWG(Instrument):
         self.write(":INIT:GATE OFF")
         
     def forceTrigger(self):
-        awg.write(":TRIG:BEG")
+        self.write(":TRIG:BEG")
     
 class Attenuator(Instrument):
     def __init__(self,address,alias):
