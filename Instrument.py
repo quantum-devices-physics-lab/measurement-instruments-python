@@ -163,14 +163,39 @@ class AWG(Instrument):
         
     def disableCh(self,ch):
         self.write(":OUTP%d OFF" % ch)
+    
+    def getTriggerMode(self):
+        '''
+            Query the trigger mode.
+        '''
+        contState = int(self.query(":INIT:CONT?")[:-1])
+        gateState = int(self.query(":INIT:GATE?")[:-1])
         
-    def setTriggerToContinuous(self):
+        if contState == 0 and gateState == 0:
+            return 'TRIGGERED'
+        elif contState == 1:
+            return 'CONTINUOUS'
+        else:
+            return 'GATED'
+        
+    def setTriggerModeToContinuous(self):
+        '''
+            Set the continuous mode.
+        '''
         self.write(":INIT:CONT ON")
+        self.write(":INIT:GATE OFF")
         
-    def setTriggerToGated(self):
+    def setTriggerModeToGated(self):
+        '''
+            Set the gated mode.
+        '''
         self.write(":INIT:GATE ON")
+        self.write(":INIT:CONT OFF")
         
-    def setTriggerToTriggered(self):
+    def setTriggerModeToTriggered(self):
+        '''
+            Set the triggered mode.
+        '''
         self.write(":INIT:CONT OFF")
         self.write(":INIT:GATE OFF")
         
