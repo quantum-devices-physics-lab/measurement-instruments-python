@@ -4,6 +4,7 @@ import sys
 import configparser
 from multiprocessing import Process
 import time
+import os ; os.environ['HDF5_DISABLE_VERSION_CHECK']='1'
 
 import One_Tone as ot
 
@@ -46,14 +47,14 @@ while True:
     if event in (None, 'Close'):# Ends execution
         window.close()
         sys.exit()
-        
-    elif (event == 'Load'):	# 
+
+    elif (event == 'Load'):	#
         config.read(values['load'])
         #sg.popup('Loaded path invalid')
         ler =config["One_Tone"]
         for keys in ler:#changes each window input with data from file
             window[keys](ler[keys])
-        
+
     elif (event == 'Save'):	#
         location=values['save']
         del values["Browse"] #remove cells not important to save in the file
@@ -66,12 +67,12 @@ while True:
             config.write(configfile)
 
         #sg.popup('Saved path invalid')
-        
-    elif (event == 'New Window'): 
+
+    elif (event == 'New Window'):
         #loads a new graph canvas
         exp.graph_window()
 
-    elif (event == 'Frequency Sweep'): 
+    elif (event == 'Frequency Sweep'):
         #passes data from window to experiment
         #converts string from window to list of ints
         exp.freq_range=list(map(float, values["freq_range"].strip('][').split(',') ))
@@ -81,7 +82,7 @@ while True:
         exp.run()
 
 
-    elif (event == 'Double Sweep'): 
+    elif (event == 'Double Sweep'):
         #passes data from window to experiment
         exp.freq_range=list(map(float, values["freq_range"].strip('][').split(',') ))
         exp.freq_samples=int(values["freq_samples"])

@@ -2,3 +2,10 @@
 .ipynb_checkpoints/
 __pycache__/
 *.swp
+.db
+One_Tone/*.db
+OneToneQt/.vs/
+OneToneQt/x64/
+OneToneQt/x86/
+OneToneQt/OneToneQt/x64/
+OneToneQt/OneToneQt/x86/
