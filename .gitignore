@@ -4,6 +4,7 @@ __pycache__/
 *.swp
 .db
 One_Tone/*.db
+One_Tone/OneTone.db
 OneToneQt/.vs/
 OneToneQt/x64/
 OneToneQt/x86/
