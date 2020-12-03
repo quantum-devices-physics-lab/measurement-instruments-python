@@ -35,7 +35,7 @@
      </font>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -121,10 +121,17 @@
         </widget>
        </item>
        <item>
-        <widget class="QPlainTextEdit" name="AddressListBox">
-         <property name="enabled">
-          <bool>true</bool>
-         </property>
+        <widget class="QListWidget" name="ListAddressWidget">
+         <item>
+          <property name="text">
+           <string>4t32</string>
+          </property>
+         </item>
+         <item>
+          <property name="text">
+           <string>2t3t23</string>
+          </property>
+         </item>
         </widget>
        </item>
       </layout>
@@ -144,7 +151,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QPushButton" name="pushButton">
+     <widget class="QPushButton" name="ControlMeasurementButton">
       <property name="geometry">
        <rect>
         <x>160</x>
@@ -178,7 +185,7 @@
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="lineEdit_3"/>
+        <widget class="QLineEdit" name="FreqStartEdit"/>
        </item>
        <item row="1" column="0">
         <widget class="QLabel" name="FreqStopLabel">
@@ -188,7 +195,7 @@
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="lineEdit_4"/>
+        <widget class="QLineEdit" name="FreqStopEdit"/>
        </item>
        <item row="2" column="0">
         <widget class="QLabel" name="NStepsLabel">
@@ -198,7 +205,7 @@
         </widget>
        </item>
        <item row="2" column="1">
-        <widget class="QLineEdit" name="lineEdit_5"/>
+        <widget class="QLineEdit" name="NStepsEdit"/>
        </item>
        <item row="3" column="0">
         <widget class="QLabel" name="LowPowerLabel">
@@ -208,7 +215,7 @@
         </widget>
        </item>
        <item row="3" column="1">
-        <widget class="QLineEdit" name="lineEdit_6"/>
+        <widget class="QLineEdit" name="LowPowerEdit"/>
        </item>
        <item row="4" column="0">
         <widget class="QLabel" name="HighPowerLabel">
@@ -218,27 +225,27 @@
         </widget>
        </item>
        <item row="4" column="1">
-        <widget class="QLineEdit" name="lineEdit_7"/>
+        <widget class="QLineEdit" name="HighPowerEdit"/>
        </item>
        <item row="5" column="0">
-        <widget class="QLabel" name="label_6">
+        <widget class="QLabel" name="IFBandwidthLabel">
          <property name="text">
           <string>IF Bandwidth:</string>
          </property>
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QLineEdit" name="lineEdit_8"/>
+        <widget class="QLineEdit" name="IFBandwidthEdit"/>
        </item>
        <item row="6" column="0">
-        <widget class="QLabel" name="label_7">
+        <widget class="QLabel" name="CircuitResistanceLabel">
          <property name="text">
           <string>Circuit Resistance:</string>
          </property>
         </widget>
        </item>
        <item row="6" column="1">
-        <widget class="QLineEdit" name="lineEdit_9"/>
+        <widget class="QLineEdit" name="CircuitResistanceEdit"/>
        </item>
       </layout>
      </widget>
@@ -256,24 +263,24 @@
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <item row="0" column="0">
-        <widget class="QLabel" name="label_2">
+        <widget class="QLabel" name="MeasurementNameLabel">
          <property name="text">
           <string>Measurement Name:</string>
          </property>
         </widget>
        </item>
        <item row="0" column="1">
-        <widget class="QLineEdit" name="lineEdit_10"/>
+        <widget class="QLineEdit" name="MeasurementNameEdit"/>
        </item>
        <item row="1" column="0">
-        <widget class="QLabel" name="label">
+        <widget class="QLabel" name="FolderLocationLabel">
          <property name="text">
           <string>Folder Location:</string>
          </property>
         </widget>
        </item>
        <item row="1" column="1">
-        <widget class="QLineEdit" name="lineEdit_11"/>
+        <widget class="QLineEdit" name="FolderLocationEdit"/>
        </item>
       </layout>
      </widget>
