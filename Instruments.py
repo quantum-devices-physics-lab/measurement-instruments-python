@@ -9,6 +9,92 @@ from matplotlib.pyplot import *
 
 rm = visa.ResourceManager()
 
+
+#TODO setter do Attenuator não consegue adicionar db de 100
+
+
+# Wrap phase______________
+def unwrap_d(Phase):
+    """
+    Unwrap Phase in Degree"""
+    return np.unwrap(Phase * np.pi / 180)
+
+
+def wrap(Phase):
+    """ Wrap back the phase
+    """
+    return (Phase + np.pi) % (2 * np.pi) - np.pi
+
+
+def wrap1(Phase):
+    """ Wrap back the phase using arctan2
+    """
+    return arctan2(sin(Phase), cos(Phase))
+
+
+
+
+def dBmtoV(Amp):
+    """Convert dBm to Volts
+    Input Amplitude in dBm
+    """
+    c = 10 * np.log10(20)
+    return np.power(10, (Amp - c) / 20)
+
+
+def VtodBm(V):
+    """Convert Volts to dBm
+    Input Voltage in Volts
+    """
+    c = 10 * np.log10(20)
+    return 20 * np.log10(V) + c
+
+
+# Convert dBm to W
+
+def dBmtoW(Amp):
+    """Convert dBm to Watts
+    Imput Amp in dBm
+    """
+    return np.power(10, (Amp - 30) / 10)
+
+def asc_to_array_int(data):
+    data = data.split('\n')[0].split(',')
+    return [int(float(i)) for i in data]
+
+def asc_to_array_float(data):
+    data = data.split('\n')[0].split(',')
+    return [float(i) for i in data]
+
+def fit_peak(X,Y,n):
+    from scipy.optimize import curve_fit
+    def func(x, a, b, c):
+        return a*(x-b)**2+c
+
+    peak = np.where(Y == np.min(Y))[0][0]
+    begin = peak-n
+    end = peak +n
+    n_interpolate = 41
+    xnew = np.linspace(X[begin], X[end-1], num=n_interpolate, endpoint=True)
+    popt, pcov = curve_fit(func, X[begin:end], Y[begin:end],p0=[1,X[peak],Y[peak]])
+    ynew= func(xnew,*popt)
+
+    return xnew,ynew
+
+def get_curve(na):
+    na.data_array_format = 'PLOGarithmic'
+    return na.data_array(),na.frequency_array()
+
+def parse_data(data,freq):
+    Y = [float(i) for i in data.split('\n')[0].split(',')]
+    phase = np.array(Y[1::2])
+    del Y[1::2]
+    mag = np.array(Y)
+    X = np.array(asc_to_array_int(freq))
+
+    return X,mag,phase
+
+
 class Instrument:
     def __init__(self,resource_address,alias):
         self._inst = rm.open_resource(resource_address)
