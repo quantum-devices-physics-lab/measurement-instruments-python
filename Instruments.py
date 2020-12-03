@@ -184,3 +184,135 @@ class DigitalStorageOscilloscope(Instrument):
     def sampleRate(self, samplerate):
         self.write("ACQuire:SRATe:ANALog {}".format(samplerate))
         self._sample_rate = float(self.query("ACQuire:SRATe:ANALog?".format(250e6)).split()[0])
+
+
+
+class AWG(Instrument):
+    def __init__(self, address, alias):
+        super().__init__(address,alias)
+        self.stop()
+        self.write(":INST:DACM SING")
+        self.write(":INST:MEM:EXT:RDIV DIV1")
+
+    def _convertToByte(self,data, A):
+
+        np.clip(data, -A, A, data)
+
+        size = 256 * (1 + divmod(len(data) - 1, 256)[0])
+
+        y = np.zeros(size, dtype=np.int8)
+        y[:len(data)] = np.array(127 * data / A, dtype=np.int8)
+        return y
+
+    def loadWaveform(self,data):
+        self.convertedData = self._convertToByte(data,self.Vamp)
+
+    def clearWaveform(self,ch,seq):
+        self.write(":TRAC{}:DEL {}".format(ch,seq));
+
+    def sendWaveform(self,ch,seq):
+        data = self.convertedData
+        n_elem = len(data)
+
+        self.write(':TRAC{}:DEF {},{},0'.format(ch,seq, n_elem))
+        # create binary data as bytes with header
+        start, length = 0, len(data)
+        sLen = b'%d' % length
+        sHead = b'#%d%s' % (len(sLen), sLen)
+        # send to AWG
+        sCmd = b':TRAC%d:DATA %d,%d,' % (ch, seq, start)
+        self.write_raw(sCmd + sHead + data[start:start+length].tobytes())
+
+    def start(self):
+        '''
+        Start signal generation on all channels.
+        '''
+        self.write('INIT:IMM')
+
+    def stop(self):
+        '''
+        Stop signal generation on all channels
+        '''
+        self.write(':ABOR')
+
+    def enableCh(self,ch):
+        '''
+        Switch the amplifier of the output path for a channel on.
+        '''
+        self.write(":OUTP%d ON" % ch)
+
+    def disableCh(self,ch):
+        '''
+        Switch the amplifier of the output path for a channel off.
+        '''
+        self.write(":OUTP%d OFF" % ch)
+
+    def getTriggerMode(self):
+        '''
+            Query the trigger mode.
+        '''
+        contState = int(self.query(":INIT:CONT?")[:-1])
+        gateState = int(self.query(":INIT:GATE?")[:-1])
+
+        if contState == 0 and gateState == 0:
+            return 'TRIGGERED'
+        elif contState == 1:
+            return 'CONTINUOUS'
+        else:
+            return 'GATED'
+
+    def setTriggerModeToContinuous(self):
+        '''
+            Set the continuous mode.
+        '''
+        self.write(":INIT:CONT ON")
+        self.write(":INIT:GATE OFF")
+
+    def setTriggerModeToGated(self):
+        '''
+            Set the gated mode.
+        '''
+        self.write(":INIT:GATE ON")
+        self.write(":INIT:CONT OFF")
+
+    def setTriggerModeToTriggered(self):
+        '''
+            Set the triggered mode.
+        '''
+        self.write(":INIT:CONT OFF")
+        self.write(":INIT:GATE OFF")
+
+    def forceTrigger(self):
+        self.write(":TRIG:BEG")
+
+    @property
+    def sampleRate(self):
+        '''
+            Set or query the sample frequency of the output DAC.
+
+        '''
+        return float(self.query(":FREQ:RAST?")[:-1])
+
+
+    @sampleRate.setter
+    def sampleRate(self,freq):
+        '''
+            Set or query the sample frequency of the output DAC.
+        '''
+
+        if type(freq) == str:
+            if freq.lower() == 'min' or freq.lower() == 'max':
+                freq = freq.lower()
+            else:
+                raise ValueError("Invalid value. Function accepts only 'min', 'max', float or int.")
+        elif type(freq) == float:
+            if not (freq >= 53.76e9 and freq <= 65e9):
+                raise ValueError("Invalid value. Value not within correct range: between 53.76 GSa/s and 65 GSa/s")
+        elif type(freq) == int:
+            if not (freq >= int(53.76e9) and freq <= int(65e9)):
+                raise ValueError("Invalid value. Value not within correct range: between 53.76 GSa/s and 65 GSa/s")
+        else:
+            raise TypeError("Invalid type. Function accepts only str, float or int.")
+
+
+        self.write(":FREQ:RAST {}".format(freq))
