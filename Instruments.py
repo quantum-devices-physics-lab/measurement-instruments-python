@@ -316,3 +316,28 @@ class AWG(Instrument):
 
 
         self.write(":FREQ:RAST {}".format(freq))
+
+class Attenuator(Instrument):
+    def __init__(self,address,alias):
+        super().__init__(address,alias)
+        self._attenuation = self.attenuation
+
+    @property
+    def attenuation(self):
+        '''This sets the attenuation level. '''
+
+        d = int(self.query("ATTenuator:BANK1:Y?").split("\n")[0])
+        u = int(self.query("ATTenuator:BANK1:X?").split("\n")[0])
+        self._attenuation = d+u
+        return self._attenuation
+
+
+    @attenuation.setter
+    def attenuation(self,att):
+        '''This gets the attenuation level. '''
+
+        d = int(att/10)
+        u = int(att%10)
+        self.write('ATT:BANK1:X {}'.format(u))
+        self.write('ATT:BANK1:Y {}'.format(d*10))
+        self._attenuation = d+u
