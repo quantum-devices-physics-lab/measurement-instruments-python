@@ -9,9 +9,14 @@ from matplotlib.pyplot import *
 
 rm = visa.ResourceManager()
 
-
 #TODO setter do Attenuator não consegue adicionar db de 100
 
+
+
+def resource_list():
+    '''Return a tuple with resource list'''
+    
+    return rm.list_resources()
 
 # Wrap phase______________
 def unwrap_d(Phase):
