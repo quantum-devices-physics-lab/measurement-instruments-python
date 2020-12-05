@@ -40,6 +40,7 @@ void OneToneQt::receivedDataPoint(double data)
 {
 	qDebug("Thread id inside receivedDataPoint %d", (int)QThread::currentThreadId());
 	qDebug("data point received %f", data);
+	ui.measurementStatusLabel->setText("Acquiring data");
 }
 
 void OneToneQt::finishedMeasurement()
@@ -48,4 +49,6 @@ void OneToneQt::finishedMeasurement()
 	ui.StartMeasurementButton->setEnabled(true);
 	ui.StopMeasurementButton->setEnabled(false);
 	running = false;
+	ui.measurementStatusLabel->setText("Waiting Measurement to Start");
+	
 }
