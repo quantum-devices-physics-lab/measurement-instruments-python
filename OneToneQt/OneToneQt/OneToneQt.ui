@@ -157,7 +157,7 @@
        </rect>
       </property>
      </widget>
-     <widget class="QPushButton" name="ControlMeasurementButton">
+     <widget class="QPushButton" name="StartMeasurementButton">
       <property name="geometry">
        <rect>
         <x>160</x>
@@ -289,6 +289,22 @@
         <widget class="QLineEdit" name="FolderLocationEdit"/>
        </item>
       </layout>
+     </widget>
+     <widget class="QPushButton" name="StopMeasurementButton">
+      <property name="enabled">
+       <bool>false</bool>
+      </property>
+      <property name="geometry">
+       <rect>
+        <x>280</x>
+        <y>400</y>
+        <width>81</width>
+        <height>41</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Stop</string>
+      </property>
      </widget>
     </widget>
    </widget>

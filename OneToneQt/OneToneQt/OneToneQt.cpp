@@ -8,25 +8,44 @@ OneToneQt::OneToneQt(QWidget *parent)
 	running = false;
 }
 
-void OneToneQt::on_ControlMeasurementButton_clicked()
+void OneToneQt::on_StartMeasurementButton_clicked()
 {
-	qDebug("Thread id inside on_ControlMeasurementButton_clicked %d", (int)QThread::currentThreadId());
-	if (running)
+	qDebug("Thread id inside on_StartMeasurementButton_clicked %d", (int)QThread::currentThreadId());
+	if (!running)
 	{
-		ui.ControlMeasurementButton->setText("Stop");
-		running = false;
-	} 
-	else 
-	{
-		ui.ControlMeasurementButton->setText("Start");
+		ui.StartMeasurementButton->setEnabled(false);
+		ui.StopMeasurementButton->setEnabled(true);
 		running = true;
+		emit startMeasurement();
 	}
 	
 }
+
+void OneToneQt::on_StopMeasurementButton_clicked()
+{
+	qDebug("Thread id inside on_StopMeasurementButton_clicked %d", (int)QThread::currentThreadId());
+	if (running)
+	{
+		ui.StartMeasurementButton->setEnabled(true);
+		ui.StopMeasurementButton->setEnabled(false);
+		running = false;
+		emit stopMeasurement();
+	}
+
+}
+
 
 
 void OneToneQt::receivedDataPoint(double data) 
 {
 	qDebug("Thread id inside receivedDataPoint %d", (int)QThread::currentThreadId());
 	qDebug("data point received %f", data);
+}
+
+void OneToneQt::finishedMeasurement()
+{
+	qDebug("Finished Measurement %d", (int)QThread::currentThreadId());
+	ui.StartMeasurementButton->setEnabled(true);
+	ui.StopMeasurementButton->setEnabled(false);
+	running = false;
 }

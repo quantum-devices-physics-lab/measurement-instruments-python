@@ -12,12 +12,20 @@ public:
 	Ui::OneToneQtClass ui;
 
 
+
+
 private:
 	bool running;
 	
 public slots:
 	void receivedDataPoint(double);
+	void finishedMeasurement();
 
 private slots:
-	void on_ControlMeasurementButton_clicked();
+	void on_StartMeasurementButton_clicked();
+	void on_StopMeasurementButton_clicked();
+
+signals:
+	void startMeasurement();
+	void stopMeasurement();
 };
