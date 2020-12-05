@@ -9,7 +9,15 @@ class OneToneQt : public QMainWindow
 
 public:
     OneToneQt(QWidget *parent = Q_NULLPTR);
+	Ui::OneToneQtClass ui;
+
 
 private:
-    Ui::OneToneQtClass ui;
+	bool running;
+	
+public slots:
+	void receivedDataPoint(double);
+
+private slots:
+	void on_ControlMeasurementButton_clicked();
 };

@@ -33,21 +33,21 @@
     <QtMoc Include="OneToneQt.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="OneToneQt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
+    <ClCompile Include="PythonThread.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\Instruments.py">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\OneToneController.py">
-      <Filter>Resource Files</Filter>
-    </None>
+    <QtMoc Include="PythonThread.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
 </Project>
