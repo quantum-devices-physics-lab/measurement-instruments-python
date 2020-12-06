@@ -7,7 +7,7 @@ void PythonThread::run()
 		QMutexLocker locker(&m_mutex);
 		m_stop = false;
 	}
-
+	static double data = 0.0f;
 	qDebug("Thread id inside run %d", (int)QThread::currentThreadId());
 	for (int i =0; i < 10; i++) 
 	{
@@ -16,12 +16,26 @@ void PythonThread::run()
 			if (m_stop) break;
 		}
 
-		static double data = 0.0f;
+		
 		data += 0.1f;
 		qDebug("data point sent %f", data);
-		emit signalDataPoint(data,data+1);
+		emit signalDataPoint(0,data,data+1);
 
-		msleep(1000);
+		msleep(10);
+	}
+	data = 0.0f;
+	for (int i = 0; i < 10; i++)
+	{
+		{
+			QMutexLocker locker(&m_mutex);
+			if (m_stop) break;
+		}
+
+		data += 0.1f;
+		qDebug("data point sent %f", data);
+		emit signalDataPoint(1,data, data );
+
+		msleep(10);
 	}
 
 }

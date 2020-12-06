@@ -20,5 +20,5 @@ public slots:
 	void stop();
 
 signals:
-	void signalDataPoint(double,double);
+	void signalDataPoint(int,double,double);
 };
