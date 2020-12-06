@@ -3,6 +3,7 @@
 
 void PythonThread::run()
 {
+	qDebug("got the %f", PythonSettings.startFrequency);
 	{
 		QMutexLocker locker(&m_mutex);
 		m_stop = false;
@@ -21,7 +22,7 @@ void PythonThread::run()
 		qDebug("data point sent %f", data);
 		emit signalDataPoint(0,data,data+1);
 
-		msleep(10);
+		msleep(1000);
 	}
 	data = 0.0f;
 	for (int i = 0; i < 10; i++)
@@ -35,9 +36,15 @@ void PythonThread::run()
 		qDebug("data point sent %f", data);
 		emit signalDataPoint(1,data, data );
 
-		msleep(10);
+		msleep(1000);
 	}
 
+}
+
+void PythonThread::loadAndStart(MeasurementSetting settings)
+{
+	PythonSettings = settings;
+	emit this->start();
 }
 
 

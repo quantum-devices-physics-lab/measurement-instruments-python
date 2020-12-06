@@ -11,10 +11,27 @@ OneToneQt::OneToneQt(QWidget *parent)
     ui.setupUi(this);
 	running = false;
 
+
+	settings.startFrequency = 4;
+	settings.stopFrequency = 6;
+	settings.nSteps = 10;
+	settings.lowPowerAttenuation = 60;
+	settings.highPowerAttenuation = 10;
+	settings.circuitResistance = 50;
+	settings.ifBandwidth = 300;
+
+	ui.FreqStartEdit->setText(QString::number(settings.startFrequency));
+	ui.FreqStopEdit->setText(QString::number(settings.stopFrequency));
+	ui.NStepsEdit->setText(QString::number(settings.nSteps));
+	ui.LowPowerEdit->setText(QString::number(settings.lowPowerAttenuation));
+	ui.HighPowerEdit->setText(QString::number(settings.highPowerAttenuation));
+	ui.CircuitResistanceEdit->setText(QString::number(settings.circuitResistance));
+	ui.IFBandwidthEdit->setText(QString::number(settings.ifBandwidth));
+
 	indexlow = 0;
 	indexhigh = 0;
 
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < settings.nSteps; i++)
 	{
 		xlow[i] = 0;
 		ylow[i] = 0;
@@ -34,6 +51,46 @@ OneToneQt::OneToneQt(QWidget *parent)
 	ui.DynamicPlotWidget->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 4));
 }
 
+void OneToneQt::on_FreqStartEdit_editingFinished()
+{
+	settings.startFrequency = ui.FreqStartEdit->text().toDouble();
+}
+
+
+void OneToneQt::on_FreqStopEdit_editingFinished()
+{
+	settings.stopFrequency = ui.FreqStopEdit->text().toDouble();
+}
+
+void OneToneQt::on_NStepsEdit_editingFinished()
+{
+	settings.nSteps = ui.NStepsEdit->text().toInt();
+	xlow.resize(settings.nSteps);
+	xhigh.resize(settings.nSteps);
+	ylow.resize(settings.nSteps);
+	yhigh.resize(settings.nSteps);
+}
+
+void OneToneQt::on_LowPowerEdit_editingFinished()
+{
+	settings.lowPowerAttenuation = ui.LowPowerEdit->text().toInt();
+}
+
+void OneToneQt::on_HighPowerEdit_editingFinished()
+{
+	settings.highPowerAttenuation = ui.HighPowerEdit->text().toInt();
+}
+
+void OneToneQt::on_CircuitResistanceEdit_editingFinished()
+{
+	settings.circuitResistance = ui.CircuitResistanceEdit->text().toDouble();
+}
+
+void OneToneQt::on_IFBandwidthEdit_editingFinished()
+{
+	settings.ifBandwidth = ui.IFBandwidthEdit->text().toDouble();
+}
+
 void OneToneQt::on_StartMeasurementButton_clicked()
 {
 
@@ -48,7 +105,7 @@ void OneToneQt::on_StartMeasurementButton_clicked()
 		ui.StartMeasurementButton->setEnabled(false);
 		ui.StopMeasurementButton->setEnabled(true);
 		running = true;
-		emit startMeasurement();
+		emit startMeasurement(settings);
 	}
 	
 }
@@ -98,7 +155,7 @@ void OneToneQt::finishedMeasurement()
 	ui.StopMeasurementButton->setEnabled(false);
 	indexlow = 0;
 	indexhigh = 0;
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < settings.nSteps; i++)
 	{
 		xlow[i] = 0;
 		ylow[i] = 0;
