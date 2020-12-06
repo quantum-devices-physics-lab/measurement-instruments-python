@@ -16,9 +16,11 @@ public:
 
 private:
 	bool running;
+	QVector<double> x, y;
+	int index;
 	
 public slots:
-	void receivedDataPoint(double);
+	void receivedDataPoint(double,double);
 	void finishedMeasurement();
 
 private slots:
