@@ -1,5 +1,4 @@
 #include "PythonThread.h"
-#include "CustomPythonLib.h"
 
 void PythonThread::run()
 {
@@ -43,7 +42,6 @@ void PythonThread::run()
 
 void PythonThread::loadAndStart(MeasurementSetting settings)
 {
-	qDebug("python test %f", process());
 	PythonSettings = settings;
 	emit this->start();
 }
