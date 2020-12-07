@@ -1,17 +1,19 @@
 #include "PythonThread.h"
 
 
-double lorentzian(double freq, double res_freq, double sigma)
+double lorentzian(double A, double freq, double res_freq, double sigma)
 {
-	return (sigma / 2) / ((freq - res_freq)*(freq - res_freq) + (sigma / 2)*(sigma / 2));
+	return (sigma / 2) / ((freq - res_freq)*(freq - res_freq) + (sigma / 2)*(sigma / 2))/3.1415;
 }
 
 
 void PythonThread::run()
 {
 
-	double dfreq = (PythonSettings.stopFrequency - PythonSettings.startFrequency) / PythonSettings.nSteps;
+	double dfreq = (PythonSettings.stopFrequency - PythonSettings.startFrequency) / (PythonSettings.nSteps-1);
 	qDebug("Thread id inside run %d", (int)QThread::currentThreadId());
+
+	double half_freq = (PythonSettings.stopFrequency + PythonSettings.startFrequency) / 2;
 
 
 	//low power
@@ -22,7 +24,7 @@ void PythonThread::run()
 			if (m_stop) break;
 		}
 
-		double result = lorentzian(freq, freq - 0.05f, 0.01f);
+		double result = lorentzian(10,freq, half_freq - 0.05f, 0.01f);
 
 		emit signalDataPoint(0,freq, result);
 	}
@@ -35,7 +37,7 @@ void PythonThread::run()
 			if (m_stop) break;
 		}
 
-		double result = lorentzian(freq, freq, 0.01f);
+		double result = lorentzian(10, freq, half_freq, 0.01f);
 
 		emit signalDataPoint(1, freq, result);
 	}

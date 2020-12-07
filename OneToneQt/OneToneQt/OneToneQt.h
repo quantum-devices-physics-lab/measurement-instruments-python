@@ -20,6 +20,7 @@ private:
 	QVector<double> xlow, ylow,xhigh,yhigh;
 	int indexlow,indexhigh;
 	MeasurementSetting settings;
+	double max_y_value;
 
 	
 public slots:

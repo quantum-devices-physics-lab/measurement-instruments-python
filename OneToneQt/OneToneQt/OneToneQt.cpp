@@ -3,18 +3,19 @@
 
 OneToneQt::OneToneQt(QWidget *parent)
     : QMainWindow(parent)
-	, xlow(10)
-	, ylow(10)
-	, xhigh(10)
-	, yhigh(10)
+	, xlow(100)
+	, ylow(100)
+	, xhigh(100)
+	, yhigh(100)
+	, max_y_value(5)
 {
     ui.setupUi(this);
 	running = false;
 
 
-	settings.startFrequency = 4;
-	settings.stopFrequency = 6;
-	settings.nSteps = 10;
+	settings.startFrequency = 4.7;
+	settings.stopFrequency = 5.2;
+	settings.nSteps = 100;
 	settings.lowPowerAttenuation = 60;
 	settings.highPowerAttenuation = 10;
 	settings.circuitResistance = 50;
@@ -39,27 +40,35 @@ OneToneQt::OneToneQt(QWidget *parent)
 		yhigh[i] = 0;
 	}
 
+	ui.DynamicPlotWidget->xAxis->setRange(settings.startFrequency, settings.stopFrequency);
+	ui.DynamicPlotWidget->yAxis->setRange(0, max_y_value);
+	ui.DynamicPlotWidget->legend->setVisible(true);
+
 	ui.DynamicPlotWidget->addGraph();
 	ui.DynamicPlotWidget->graph(0)->setPen(QColor(0,0, 255, 255));
 	ui.DynamicPlotWidget->graph(0)->setLineStyle(QCPGraph::lsNone);
 	ui.DynamicPlotWidget->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 4));
-	
+	ui.DynamicPlotWidget->graph(0)->setName("Low Power");
 
+	
 	ui.DynamicPlotWidget->addGraph();
 	ui.DynamicPlotWidget->graph(1)->setPen(QColor(255, 0, 0, 255));
 	ui.DynamicPlotWidget->graph(1)->setLineStyle(QCPGraph::lsNone);
 	ui.DynamicPlotWidget->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 4));
+	ui.DynamicPlotWidget->graph(1)->setName("High Power");
 }
 
 void OneToneQt::on_FreqStartEdit_editingFinished()
 {
 	settings.startFrequency = ui.FreqStartEdit->text().toDouble();
+	ui.DynamicPlotWidget->xAxis->setRange(settings.startFrequency, settings.stopFrequency);
 }
 
 
 void OneToneQt::on_FreqStopEdit_editingFinished()
 {
 	settings.stopFrequency = ui.FreqStopEdit->text().toDouble();
+	ui.DynamicPlotWidget->xAxis->setRange(settings.startFrequency, settings.stopFrequency);
 }
 
 void OneToneQt::on_NStepsEdit_editingFinished()
@@ -128,7 +137,14 @@ void OneToneQt::on_StopMeasurementButton_clicked()
 void OneToneQt::receivedDataPoint(int graph,double datax,double datay) 
 {
 	qDebug("Thread id inside receivedDataPoint %d", (int)QThread::currentThreadId());
-	qDebug("data point received %f", datax);
+	qDebug("type: %d, freq %f amp %f", graph,datax,datay);
+
+	if (datay > max_y_value)
+	{
+		max_y_value = datay;
+		ui.DynamicPlotWidget->yAxis->setRange(0, max_y_value);
+	}
+
 	ui.measurementStatusLabel->setText("Acquiring data");
 	if (graph == 0)
 	{
@@ -162,6 +178,8 @@ void OneToneQt::finishedMeasurement()
 		xhigh[i] = 0;
 		yhigh[i] = 0;
 	}
+
+	
 
 	running = false;
 	ui.measurementStatusLabel->setText("Waiting Measurement to Start");
