@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1044</width>
-    <height>732</height>
+    <width>1051</width>
+    <height>762</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,10 +17,10 @@
    <widget class="QTabWidget" name="tabWidget">
     <property name="geometry">
      <rect>
-      <x>70</x>
-      <y>40</y>
-      <width>911</width>
-      <height>591</height>
+      <x>30</x>
+      <y>0</y>
+      <width>981</width>
+      <height>681</height>
      </rect>
     </property>
     <property name="currentIndex">
@@ -41,7 +41,7 @@
         <x>70</x>
         <y>130</y>
         <width>351</width>
-        <height>270</height>
+        <height>241</height>
        </rect>
       </property>
       <layout class="QFormLayout" name="formLayout">
@@ -255,8 +255,8 @@
      <widget class="QPushButton" name="StartMeasurementButton">
       <property name="geometry">
        <rect>
-        <x>110</x>
-        <y>410</y>
+        <x>80</x>
+        <y>540</y>
         <width>81</width>
         <height>41</height>
        </rect>
@@ -276,8 +276,8 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>280</x>
-        <y>410</y>
+        <x>230</x>
+        <y>540</y>
         <width>91</width>
         <height>41</height>
        </rect>
@@ -309,6 +309,113 @@
        <string>Waiting to start measurement</string>
       </property>
      </widget>
+     <widget class="QWidget" name="verticalLayoutWidget">
+      <property name="geometry">
+       <rect>
+        <x>150</x>
+        <y>390</y>
+        <width>202</width>
+        <height>111</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <widget class="QCheckBox" name="qFreqInterationCheckBox">
+         <property name="text">
+          <string>Iterate over Qubit Frequency</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QFormLayout" name="formLayout_2">
+         <property name="labelAlignment">
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="initialQFreqLabel">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Initial Qubit Frequency:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="initialQFreqEdit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="finalQFreqLabel">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Final Qubit Frequency:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLineEdit" name="finalQFreqEdit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="nStepsQfreqLabel">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Number of Steps:</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="nStepsQfreqEdit">
+           <property name="enabled">
+            <bool>false</bool>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </widget>
   </widget>
@@ -317,7 +424,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1044</width>
+     <width>1051</width>
      <height>21</height>
     </rect>
    </property>

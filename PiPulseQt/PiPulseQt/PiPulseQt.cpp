@@ -1,5 +1,6 @@
 #include "PiPulseQt.h"
 
+
 PiPulseQt::PiPulseQt(QWidget *parent)
 	: QMainWindow(parent)
 	, x(100)
@@ -42,7 +43,32 @@ PiPulseQt::PiPulseQt(QWidget *parent)
 	ui.DynamicPlotWidget->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 4));
 }
 
+void PiPulseQt::on_qFreqInterationCheckBox_stateChanged(int state)
+{
+	if (state == Qt::Unchecked) 
+	{
+		ui.initialQFreqLabel->setEnabled(false);
+		ui.initialQFreqEdit->setEnabled(false);
+		ui.finalQFreqLabel->setEnabled(false);
+		ui.finalQFreqEdit->setEnabled(false);
+		ui.nStepsQfreqLabel->setEnabled(false);
+		ui.nStepsQfreqEdit->setEnabled(false);
 
+		ui.qubitFreqLabel->setEnabled(true);
+		ui.qubitFreqEdit->setEnabled(true);
+	}
+	else {
+		ui.initialQFreqLabel->setEnabled(true);
+		ui.initialQFreqEdit->setEnabled(true);
+		ui.finalQFreqLabel->setEnabled(true);
+		ui.finalQFreqEdit->setEnabled(true);
+		ui.nStepsQfreqLabel->setEnabled(true);
+		ui.nStepsQfreqEdit->setEnabled(true);
+
+		ui.qubitFreqLabel->setEnabled(false);
+		ui.qubitFreqEdit->setEnabled(false);
+	}
+}
 
 void PiPulseQt::on_initialTauEdit_editingFinished()
 {

@@ -3,6 +3,7 @@
 #include <QtWidgets/QMainWindow>
 #include "ui_PiPulseQt.h"
 #include "dataype.h"
+#include <Qt>
 
 class PiPulseQt : public QMainWindow
 {
@@ -33,6 +34,7 @@ private slots:
 	void on_qubitFreqEdit_editingFinished();
 	void on_nIterEdit_editingFinished();
 	void on_potencyEdit_editingFinished();
+	void on_qFreqInterationCheckBox_stateChanged(int);
 
 
 signals:
