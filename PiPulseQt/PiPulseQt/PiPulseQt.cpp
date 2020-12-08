@@ -14,7 +14,8 @@ PiPulseQt::PiPulseQt(QWidget *parent)
 	settings.finalTau = 10;
 	settings.nSteps = 100;
 	settings.cFreq = 4;
-	settings.qFreq = 5;
+	settings.initialQFreq = 5;
+	settings.finalQFreq = 7;
 	settings.nIter = 1000;
 	settings.potency = 7;
 
@@ -22,7 +23,7 @@ PiPulseQt::PiPulseQt(QWidget *parent)
 	ui.finalTauEdit->setText(QString::number(settings.finalTau));
 	ui.nStepsEdit->setText(QString::number(settings.nSteps));
 	ui.cavityFreqEdit->setText(QString::number(settings.cFreq));
-	ui.qubitFreqEdit->setText(QString::number(settings.qFreq));
+	ui.qubitFreqEdit->setText(QString::number(settings.initialQFreq));
 	ui.nIterEdit->setText(QString::number(settings.nIter));
 	ui.potencyEdit->setText(QString::number(settings.potency));
 
@@ -43,6 +44,21 @@ PiPulseQt::PiPulseQt(QWidget *parent)
 	ui.DynamicPlotWidget->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 4));
 }
 
+void PiPulseQt::on_initialQFreqEdit_editingFinished()
+{
+	settings.initialQFreq = ui.initialQFreqEdit->text().toDouble();
+}
+
+void PiPulseQt::on_finalQFreqEdit_editingFinished()
+{
+	settings.finalQFreq = ui.finalQFreqEdit->text().toDouble();
+}
+
+void PiPulseQt::on_nStepsQfreqEdit_editingFinished()
+{
+	settings.nQFreqSteps = ui.nStepsQfreqEdit->text().toInt();
+}
+
 void PiPulseQt::on_qFreqInterationCheckBox_stateChanged(int state)
 {
 	if (state == Qt::Unchecked) 
@@ -56,6 +72,10 @@ void PiPulseQt::on_qFreqInterationCheckBox_stateChanged(int state)
 
 		ui.qubitFreqLabel->setEnabled(true);
 		ui.qubitFreqEdit->setEnabled(true);
+
+		settings.CheckQFreqIteration = false;
+
+		ui.DynamicPlotWidget->yAxis->setRange(0, 1);
 	}
 	else {
 		ui.initialQFreqLabel->setEnabled(true);
@@ -67,6 +87,8 @@ void PiPulseQt::on_qFreqInterationCheckBox_stateChanged(int state)
 
 		ui.qubitFreqLabel->setEnabled(false);
 		ui.qubitFreqEdit->setEnabled(false);
+
+		settings.CheckQFreqIteration = true;
 	}
 }
 
@@ -96,8 +118,7 @@ void PiPulseQt::on_cavityFreqEdit_editingFinished()
 
 void PiPulseQt::on_qubitFreqEdit_editingFinished()
 {
-	settings.qFreq = ui.qubitFreqEdit->text().toDouble();
-	qDebug("qfreq %f", settings.qFreq);
+	settings.initialQFreq = ui.qubitFreqEdit->text().toDouble();
 }
 
 void PiPulseQt::on_nIterEdit_editingFinished()

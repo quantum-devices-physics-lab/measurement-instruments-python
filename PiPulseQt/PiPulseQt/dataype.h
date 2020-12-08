@@ -7,8 +7,9 @@ struct MeasurementSetting {
 	int nSteps; // Number of time durations
 	int nQFreqSteps; // number of qubit drive frequency
 	int nIter; // Number of iterations to each time duration
-	double qFreq; // qubit Frequency
+	double initialQFreq; // qubit Frequency
+	double finalQFreq; // qubit Frequency
 	double cFreq; // cavity Frequnecy
 	double potency; // Pulse potency
-	bool qFreqIteration; 
+	bool CheckQFreqIteration; 
 };
