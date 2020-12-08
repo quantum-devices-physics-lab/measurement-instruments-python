@@ -5,7 +5,7 @@
 void ProcessThread::run()
 {
 
-	double dtau = (mSettings.initialTau - mSettings.finalTau) / (mSettings.nSteps - 1);
+	double dtau = (mSettings.finalTau - mSettings.initialTau) / (mSettings.nSteps - 1);
 
 	for (double tau = mSettings.initialTau; tau <= mSettings.finalTau; tau += dtau)
 	{
@@ -16,7 +16,7 @@ void ProcessThread::run()
 
 		double result = cos(tau)+1;
 
-		emit signalDataPoint(0, tau, result);
+		emit signalDataPoint( tau, result);
 	}
 
 

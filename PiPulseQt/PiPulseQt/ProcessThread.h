@@ -23,5 +23,5 @@ public slots:
 	void loadAndStart(MeasurementSetting);
 
 signals:
-	void signalDataPoint(int, double, double);
+	void signalDataPoint(double, double);
 };
