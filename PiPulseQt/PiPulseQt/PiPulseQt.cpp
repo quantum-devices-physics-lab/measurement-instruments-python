@@ -49,6 +49,7 @@ PiPulseQt::PiPulseQt(QWidget *parent)
 	colorMap->data()->setSize(settings.nSteps, settings.nQFreqSteps);
 	colorMap->setGradient(QCPColorGradient::gpHot);
 	colorMap->setDataRange(QCPRange(0, 1));
+	colorMap->setInterpolate(false);
 	colorMap->rescaleDataRange(true);
 }
 

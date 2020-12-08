@@ -30,7 +30,7 @@ void ProcessThread::run()
 
 	for (int j = 0; j < ySteps; j++)
 	{
-
+		
 		{
 			QMutexLocker locker(&m_mutex);
 			if (m_stop) break;
@@ -39,14 +39,18 @@ void ProcessThread::run()
 		delta = trueQFreq - qFreq;
 		Omega = sqrt(A*A + delta * delta);
 
+
+		tau = mSettings.initialTau;
 		for (int i = 0; i < mSettings.nSteps; i++)
 		{
+	
 			{
 				QMutexLocker locker(&m_mutex);
 				if (m_stop) break;
 			}
 
 			double prob = A * A / (Omega*Omega)*sin(Omega*tau / 2)*sin(Omega*tau / 2) * 100;
+			
 			
 			pop = 0;
 			for (int k = 0; k < mSettings.nIter; k++)
@@ -67,7 +71,7 @@ void ProcessThread::run()
 
 			tau += dtau;
 
-			emit signalDataPoint(i, j, prob/100);
+			emit signalDataPoint(i, j, pop);
 		}
 		qFreq += dFreq;
 	}
