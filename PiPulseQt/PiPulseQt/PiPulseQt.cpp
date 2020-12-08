@@ -71,6 +71,7 @@ void PiPulseQt::on_cavityFreqEdit_editingFinished()
 void PiPulseQt::on_qubitFreqEdit_editingFinished()
 {
 	settings.qFreq = ui.qubitFreqEdit->text().toDouble();
+	qDebug("qfreq %f", settings.qFreq);
 }
 
 void PiPulseQt::on_nIterEdit_editingFinished()
