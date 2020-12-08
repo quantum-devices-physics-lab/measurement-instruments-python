@@ -5,6 +5,8 @@
 #include "dataype.h"
 
 
+
+
 class ProcessThread : public QThread
 {
 	Q_OBJECT
@@ -15,6 +17,7 @@ private:
 	bool m_stop = false;
 	MeasurementSetting mSettings;
 
+
 protected:
 	virtual void run();
 
@@ -23,5 +26,5 @@ public slots:
 	void loadAndStart(MeasurementSetting);
 
 signals:
-	void signalDataPoint(double, double);
+	void signalDataPoint(int,int,double);
 };

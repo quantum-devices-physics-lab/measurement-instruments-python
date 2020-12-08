@@ -16,12 +16,12 @@ public:
 private:
 	bool running;
 	QVector<double> x, y;
-	int index;
 	MeasurementSetting settings;
+	QCPColorMap *colorMap;
 
 
 public slots:
-	void receivedDataPoint(double, double);
+	void receivedDataPoint(int,int,double);
 	void finishedMeasurement();
 
 private slots:

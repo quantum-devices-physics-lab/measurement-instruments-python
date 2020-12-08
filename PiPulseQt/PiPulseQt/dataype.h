@@ -13,3 +13,10 @@ struct MeasurementSetting {
 	double potency; // Pulse potency
 	bool CheckQFreqIteration; 
 };
+
+struct ReturnedData {
+	int x;
+	int y;
+	double data;
+};
+

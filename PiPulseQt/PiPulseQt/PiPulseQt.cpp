@@ -18,6 +18,8 @@ PiPulseQt::PiPulseQt(QWidget *parent)
 	settings.finalQFreq = 7;
 	settings.nIter = 1000;
 	settings.potency = 7;
+	settings.nQFreqSteps = 100;
+	settings.CheckQFreqIteration = false;
 
 	ui.initialTauEdit->setText(QString::number(settings.initialTau));
 	ui.finalTauEdit->setText(QString::number(settings.finalTau));
@@ -26,8 +28,7 @@ PiPulseQt::PiPulseQt(QWidget *parent)
 	ui.qubitFreqEdit->setText(QString::number(settings.initialQFreq));
 	ui.nIterEdit->setText(QString::number(settings.nIter));
 	ui.potencyEdit->setText(QString::number(settings.potency));
-
-	index = 0;
+	ui.nStepsQfreqEdit->setText(QString::number(settings.nQFreqSteps));
 
 	for (int i = 0; i < settings.nSteps; i++)
 	{
@@ -42,6 +43,10 @@ PiPulseQt::PiPulseQt(QWidget *parent)
 	ui.DynamicPlotWidget->graph(0)->setPen(QColor(0, 0, 255, 255));
 	ui.DynamicPlotWidget->graph(0)->setLineStyle(QCPGraph::lsNone);
 	ui.DynamicPlotWidget->graph(0)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 4));
+
+	//colorMap = new QCPColorMap(ui.DynamicPlotWidget->xAxis, ui.DynamicPlotWidget->yAxis);
+
+	//colorMap->data()->setSize(settings.nSteps, settings.nQFreqSteps);
 }
 
 void PiPulseQt::on_initialQFreqEdit_editingFinished()
@@ -75,7 +80,6 @@ void PiPulseQt::on_qFreqInterationCheckBox_stateChanged(int state)
 
 		settings.CheckQFreqIteration = false;
 
-		ui.DynamicPlotWidget->yAxis->setRange(0, 1);
 	}
 	else {
 		ui.initialQFreqLabel->setEnabled(true);
@@ -89,6 +93,8 @@ void PiPulseQt::on_qFreqInterationCheckBox_stateChanged(int state)
 		ui.qubitFreqEdit->setEnabled(false);
 
 		settings.CheckQFreqIteration = true;
+
+
 	}
 }
 
@@ -137,13 +143,24 @@ void PiPulseQt::on_StartMeasurementButton_clicked()
 	if (!running)
 	{
 
-		ui.DynamicPlotWidget->graph(0)->setData(x, y);
-		ui.DynamicPlotWidget->replot();
+		if (!settings.CheckQFreqIteration)
+		{
+			ui.DynamicPlotWidget->graph(0)->setData(x, y);
+			ui.DynamicPlotWidget->replot();
 
-		ui.StartMeasurementButton->setEnabled(false);
-		ui.StopMeasurementButton->setEnabled(true);
-		running = true;
-		emit startMeasurement(settings);
+			ui.StartMeasurementButton->setEnabled(false);
+			ui.StopMeasurementButton->setEnabled(true);
+			running = true;
+
+			ui.notificationLabel->setText("Acquiring data");
+
+			emit startMeasurement(settings);
+		}
+		else
+		{
+			//colorMap->data()->setRange(QCPRange(settings.initialTau , settings.finalTau), QCPRange(settings.initialQFreq, settings.finalQFreq));
+		}
+		
 	}
 
 }
@@ -162,16 +179,18 @@ void PiPulseQt::on_StopMeasurementButton_clicked()
 
 
 
-void PiPulseQt::receivedDataPoint(double datax, double datay)
+void PiPulseQt::receivedDataPoint(int i, int j, double data)
 {
 	qDebug("Thread id inside receivedDataPoint %d", (int)QThread::currentThreadId());
-	qDebug("tau %f amp %f",datax, datay);
+	qDebug("i %d amp %f",i, data);
 
-	ui.notificationLabel->setText("Acquiring data");
-	qDebug("index %d", index);
-	x[index] = datax;
-	y[index] = datay;
-	index++;
+
+
+	
+
+	double dtau = (settings.finalTau - settings.initialTau) / (settings.nSteps - 1);
+	x[i] = i*dtau + settings.initialTau;
+	y[i] = data;
 	ui.DynamicPlotWidget->graph(0)->setData(x, y);
 	ui.DynamicPlotWidget->replot();
 
@@ -182,7 +201,6 @@ void PiPulseQt::finishedMeasurement()
 	qDebug("Finished Measurement %d", (int)QThread::currentThreadId());
 	ui.StartMeasurementButton->setEnabled(true);
 	ui.StopMeasurementButton->setEnabled(false);
-	index = 0;
 	for (int i = 0; i < settings.nSteps; i++)
 	{
 		x[i] = 0;

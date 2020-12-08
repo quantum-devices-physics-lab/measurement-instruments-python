@@ -5,29 +5,35 @@
 
 void ProcessThread::run()
 {
+
+	qDebug("running");
 	srand(time(NULL));
 	//Retirado do naghiloo thesis pg 38
 
 	double dtau = (mSettings.finalTau - mSettings.initialTau) / (mSettings.nSteps - 1);
 	double trueQFreq = 4.345;
-	double delta = trueQFreq - mSettings.qFreq;
+	double delta = trueQFreq - mSettings.initialQFreq;
 	double  A = 1;
 	double Omega = sqrt(A*A + delta * delta);
 	double pop = 0;
 
-	for (double tau = mSettings.initialTau; tau <= mSettings.finalTau; tau += dtau)
+	double tau = mSettings.initialTau;
+
+	for (int i = 0; i < mSettings.nSteps; i++)
 	{
 		{
 			QMutexLocker locker(&m_mutex);
 			if (m_stop) break;
 		}
 
-		
+
 
 		double prob = A*A/(Omega*Omega)*sin(Omega*tau/2)*sin(Omega*tau/2)*100;
+		qDebug("prob %f", prob);
+		qDebug("tau %f", tau);
 		
 		pop = 0;
-		for (int i = 0; i < mSettings.nIter; i++)
+		for (int k = 0; k < mSettings.nIter; k++)
 		{
 			double coin = (rand() % 100);
 
@@ -36,10 +42,12 @@ void ProcessThread::run()
 				pop += 1.0f;
 			}
 		}
-
 		pop /= mSettings.nIter;
 
-		emit signalDataPoint( tau, pop);
+
+		tau += dtau;
+
+		emit signalDataPoint(i,0, pop);
 	}
 
 
