@@ -26,6 +26,8 @@ void PythonThread::run()
 
 		double result = lorentzian(10,freq, half_freq - 0.05f, 0.01f);
 
+		usleep(10000);
+
 		emit signalDataPoint(0,freq, result);
 	}
 
@@ -38,6 +40,8 @@ void PythonThread::run()
 		}
 
 		double result = lorentzian(10, freq, half_freq, 0.01f);
+
+		usleep(10000);
 
 		emit signalDataPoint(1, freq, result);
 	}

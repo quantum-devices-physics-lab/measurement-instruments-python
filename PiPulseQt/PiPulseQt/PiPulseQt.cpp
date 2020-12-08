@@ -189,8 +189,7 @@ void PiPulseQt::on_StopMeasurementButton_clicked()
 
 void PiPulseQt::receivedDataPoint(int i, int j, double data)
 {
-	qDebug("i %d j  %d Measurement %f", i,j,data);
-
+	qDebug("plotting %d", (int)QThread::currentThreadId());
 	if (!settings.CheckQFreqIteration)
 	{
 		double dtau = (settings.finalTau - settings.initialTau) / (settings.nSteps - 1);
@@ -210,8 +209,6 @@ void PiPulseQt::receivedDataPoint(int i, int j, double data)
 
 void PiPulseQt::finishedMeasurement()
 {
-	
-	qDebug("Finished Measurement %d", (int)QThread::currentThreadId());
 	ui.StartMeasurementButton->setEnabled(true);
 	ui.StopMeasurementButton->setEnabled(false);
 	for (int i = 0; i < settings.nSteps; i++)

@@ -1,13 +1,10 @@
 #include "ProcessThread.h"
 #include <math.h>
 #include <stdlib.h>
-#include <time.h>
 
 void ProcessThread::run()
 {
 
-	qDebug("Running %d", (int)QThread::currentThreadId());
-	srand(time(NULL));
 	//Retirado do naghiloo thesis pg 38
 
 	double dtau = (mSettings.finalTau - mSettings.initialTau) / (mSettings.nSteps - 1);
@@ -43,6 +40,7 @@ void ProcessThread::run()
 		tau = mSettings.initialTau;
 		for (int i = 0; i < mSettings.nSteps; i++)
 		{
+			qDebug("Running %d", (int)QThread::currentThreadId());
 	
 			{
 				QMutexLocker locker(&m_mutex);
@@ -70,6 +68,8 @@ void ProcessThread::run()
 			
 
 			tau += dtau;
+
+			usleep(10000);
 
 			emit signalDataPoint(i, j, pop);
 		}
