@@ -9,7 +9,6 @@ class PiPulseQt : public QMainWindow
 
 public:
     PiPulseQt(QWidget *parent = Q_NULLPTR);
-
-private:
-    Ui::PiPulseQtClass ui;
+	Ui::PiPulseQtClass ui;
+    
 };
