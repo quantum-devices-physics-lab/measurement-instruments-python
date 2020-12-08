@@ -6,7 +6,7 @@
 void ProcessThread::run()
 {
 
-	qDebug("running");
+	qDebug("Running %d", (int)QThread::currentThreadId());
 	srand(time(NULL));
 	//Retirado do naghiloo thesis pg 38
 
@@ -30,6 +30,12 @@ void ProcessThread::run()
 
 	for (int j = 0; j < ySteps; j++)
 	{
+
+		{
+			QMutexLocker locker(&m_mutex);
+			if (m_stop) break;
+		}
+
 		delta = trueQFreq - qFreq;
 		Omega = sqrt(A*A + delta * delta);
 
@@ -41,10 +47,14 @@ void ProcessThread::run()
 			}
 
 			double prob = A * A / (Omega*Omega)*sin(Omega*tau / 2)*sin(Omega*tau / 2) * 100;
-
+			
 			pop = 0;
 			for (int k = 0; k < mSettings.nIter; k++)
 			{
+				{
+					QMutexLocker locker(&m_mutex);
+					if (m_stop) break;
+				}
 				double coin = (rand() % 100);
 
 				if (coin < prob)
@@ -53,11 +63,11 @@ void ProcessThread::run()
 				}
 			}
 			pop /= mSettings.nIter;
-
+			
 
 			tau += dtau;
 
-			emit signalDataPoint(i, j, pop);
+			emit signalDataPoint(i, j, prob/100);
 		}
 		qFreq += dFreq;
 	}
