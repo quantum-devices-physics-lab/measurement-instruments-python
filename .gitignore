@@ -10,3 +10,11 @@ OneToneQt/x64/
 OneToneQt/x86/
 OneToneQt/OneToneQt/x64/
 OneToneQt/OneToneQt/x86/
+
+PiPulseQt/*.db
+PiPulseQt/PiPulseQt.db
+PiPulseQt/.vs/
+PiPulseQt/x64/
+PiPulseQt/x86/
+PiPulseQt/PiPulseQt/x64/
+PiPulseQt/PiPulseQt/x86/
