@@ -5,7 +5,12 @@
 void ProcessThread::run()
 {
 
+	//Retirado do naghiloo thesis pg 38
+
 	double dtau = (mSettings.finalTau - mSettings.initialTau) / (mSettings.nSteps - 1);
+	double delta = 0.2;
+	double  A = 1;
+	double Omega = sqrt(A*A + delta * delta);
 
 	for (double tau = mSettings.initialTau; tau <= mSettings.finalTau; tau += dtau)
 	{
@@ -14,9 +19,11 @@ void ProcessThread::run()
 			if (m_stop) break;
 		}
 
-		double result = cos(tau)+1;
+		
 
-		emit signalDataPoint( tau, result);
+		double pop = A*A/(Omega*Omega)*sin(Omega*tau/2)*sin(Omega*tau/2);
+
+		emit signalDataPoint( tau, pop);
 	}
 
 

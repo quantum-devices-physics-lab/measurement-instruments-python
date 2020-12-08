@@ -2,16 +2,16 @@
 
 PiPulseQt::PiPulseQt(QWidget *parent)
 	: QMainWindow(parent)
-	, x(10)
-	, y(10)
+	, x(100)
+	, y(100)
 {
 	ui.setupUi(this);
 	running = false;
 
 
-	settings.initialTau = 1;
-	settings.finalTau = 2;
-	settings.nSteps = 10;
+	settings.initialTau = 0;
+	settings.finalTau = 10;
+	settings.nSteps = 100;
 	settings.cFreq = 4;
 	settings.qFreq = 5;
 	settings.nIter = 1000;
