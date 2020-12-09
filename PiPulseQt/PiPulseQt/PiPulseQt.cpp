@@ -9,6 +9,18 @@ PiPulseQt::PiPulseQt(QWidget *parent)
 	ui.setupUi(this);
 	running = false;
 
+	doubleValidator = new QDoubleValidator();
+	intValidator = new QIntValidator();
+
+	ui.initialTauEdit->setValidator(doubleValidator);
+	ui.finalTauEdit->setValidator(doubleValidator);
+	ui.nStepsEdit->setValidator(intValidator);
+	ui.cavityFreqEdit->setValidator(doubleValidator);
+	ui.qubitFreqEdit->setValidator(doubleValidator);
+	ui.nIterEdit->setValidator(intValidator);
+	ui.nStepsQfreqEdit->setValidator(intValidator);
+	ui.finalQFreqEdit->setValidator(doubleValidator);
+	ui.initialQFreqEdit->setValidator(doubleValidator);
 
 	settings.initialTau = 0;
 	settings.finalTau = 10;
@@ -29,6 +41,8 @@ PiPulseQt::PiPulseQt(QWidget *parent)
 	ui.nIterEdit->setText(QString::number(settings.nIter));
 	ui.potencyEdit->setText(QString::number(settings.potency));
 	ui.nStepsQfreqEdit->setText(QString::number(settings.nQFreqSteps));
+
+	
 
 	for (int i = 0; i < settings.nSteps; i++)
 	{
@@ -51,6 +65,12 @@ PiPulseQt::PiPulseQt(QWidget *parent)
 	colorMap->setDataRange(QCPRange(0, 1));
 	colorMap->setInterpolate(false);
 	colorMap->rescaleDataRange(true);
+}
+
+void PiPulseQt::on_saveFileLocationEdit_editingFinished()
+{
+	qDebug("here %s", ui.saveFileLocationEdit->text().toLocal8Bit().constData());
+	settings.filename = ui.saveFileLocationEdit->text().toLocal8Bit().constData();
 }
 
 void PiPulseQt::on_initialQFreqEdit_editingFinished()
@@ -189,7 +209,6 @@ void PiPulseQt::on_StopMeasurementButton_clicked()
 
 void PiPulseQt::receivedDataPoint(int i, int j, double data)
 {
-	qDebug("plotting %d", (int)QThread::currentThreadId());
 	if (!settings.CheckQFreqIteration)
 	{
 		double dtau = (settings.finalTau - settings.initialTau) / (settings.nSteps - 1);

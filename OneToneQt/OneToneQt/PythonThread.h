@@ -2,7 +2,8 @@
 
 #include <QtCore>
 #include <QMutex>
-#include "dataype.h"
+#include "datatype.h"
+#include <fstream>
 
 
 class PythonThread : public QThread

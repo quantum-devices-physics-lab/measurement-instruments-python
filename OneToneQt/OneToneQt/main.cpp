@@ -1,11 +1,13 @@
 #include "OneToneQt.h"
 #include <QtWidgets/QApplication>
 #include "PythonThread.h"
-#include "dataype.h"
+#include "datatype.h"
+
 
 
 int main(int argc, char *argv[])
 {
+
     QApplication a(argc, argv);	
     OneToneQt w;
     w.show();

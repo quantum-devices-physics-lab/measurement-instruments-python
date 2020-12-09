@@ -2,7 +2,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_PiPulseQt.h"
-#include "dataype.h"
+#include "datatype.h"
 #include <Qt>
 
 class PiPulseQt : public QMainWindow
@@ -18,6 +18,8 @@ private:
 	QVector<double> x, y;
 	MeasurementSetting settings;
 	QCPColorMap *colorMap;
+	QDoubleValidator *doubleValidator;
+	QIntValidator *intValidator;
 
 
 public slots:
@@ -39,6 +41,7 @@ private slots:
 	void on_initialQFreqEdit_editingFinished();
 	void on_finalQFreqEdit_editingFinished();
 	void on_nStepsQfreqEdit_editingFinished();
+	void on_saveFileLocationEdit_editingFinished();
 
 
 signals:

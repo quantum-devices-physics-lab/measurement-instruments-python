@@ -12,6 +12,16 @@ OneToneQt::OneToneQt(QWidget *parent)
     ui.setupUi(this);
 	running = false;
 
+	doubleValidator = new QDoubleValidator();
+	intValidator = new QIntValidator();
+
+	ui.FreqStartEdit->setValidator(doubleValidator);
+	ui.FreqStopEdit->setValidator(doubleValidator);
+	ui.NStepsEdit->setValidator(intValidator);
+	ui.LowPowerEdit->setValidator(intValidator);
+	ui.HighPowerEdit->setValidator(intValidator);
+	ui.CircuitResistanceEdit->setValidator(doubleValidator);
+	ui.IFBandwidthEdit->setValidator(doubleValidator);
 
 	settings.startFrequency = 4.7;
 	settings.stopFrequency = 5.2;
@@ -56,6 +66,11 @@ OneToneQt::OneToneQt(QWidget *parent)
 	ui.DynamicPlotWidget->graph(1)->setLineStyle(QCPGraph::lsNone);
 	ui.DynamicPlotWidget->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 4));
 	ui.DynamicPlotWidget->graph(1)->setName("High Power");
+}
+
+void OneToneQt::on_MeasurementNameEdit_editingFinished()
+{
+	settings.filename = ui.MeasurementNameEdit->text().toLocal8Bit().constData();
 }
 
 void OneToneQt::on_FreqStartEdit_editingFinished()

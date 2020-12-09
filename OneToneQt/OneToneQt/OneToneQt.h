@@ -2,7 +2,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_OneToneQt.h"
-#include "dataype.h"
+#include "datatype.h"
 
 class OneToneQt : public QMainWindow
 {
@@ -21,6 +21,8 @@ private:
 	int indexlow,indexhigh;
 	MeasurementSetting settings;
 	double max_y_value;
+	QDoubleValidator *doubleValidator;
+	QIntValidator *intValidator;
 
 	
 public slots:
@@ -37,6 +39,7 @@ private slots:
 	void on_HighPowerEdit_editingFinished();
 	void on_CircuitResistanceEdit_editingFinished();
 	void on_IFBandwidthEdit_editingFinished();
+	void on_MeasurementNameEdit_editingFinished();
 
 
 signals:

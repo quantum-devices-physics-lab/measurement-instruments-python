@@ -1,9 +1,11 @@
 #include "ProcessThread.h"
 #include <math.h>
 #include <stdlib.h>
+#include <fstream>
 
 void ProcessThread::run()
 {
+	std::ofstream datafile(mSettings.filename);
 
 	//Retirado do naghiloo thesis pg 38
 
@@ -20,10 +22,17 @@ void ProcessThread::run()
 	if (!mSettings.CheckQFreqIteration)
 	{
 		ySteps = 1;
+		datafile << "Time Duration" << "," << "Population" << "\n";
+	}
+	else
+	{
+		datafile << "Time Duration" << "," << "Qubit Drive Frequency" << "," << "Population" << "\n";
 	}
 
 	double qFreq = mSettings.initialQFreq;
+
 	double dFreq = (mSettings.finalQFreq - mSettings.initialQFreq)/(mSettings.nQFreqSteps-1);
+
 
 	for (int j = 0; j < ySteps; j++)
 	{
@@ -40,8 +49,6 @@ void ProcessThread::run()
 		tau = mSettings.initialTau;
 		for (int i = 0; i < mSettings.nSteps; i++)
 		{
-			qDebug("Running %d", (int)QThread::currentThreadId());
-	
 			{
 				QMutexLocker locker(&m_mutex);
 				if (m_stop) break;
@@ -71,6 +78,15 @@ void ProcessThread::run()
 
 			usleep(10000);
 
+			if (!mSettings.CheckQFreqIteration)
+			{
+				datafile << tau << "," << pop << "\n";
+			}
+			else
+			{
+				datafile << tau << "," << qFreq << "," << pop << "\n";
+			}
+
 			emit signalDataPoint(i, j, pop);
 		}
 		qFreq += dFreq;
@@ -78,7 +94,7 @@ void ProcessThread::run()
 
 	
 
-
+	datafile.close();
 }
 
 void ProcessThread::loadAndStart(MeasurementSetting settings)

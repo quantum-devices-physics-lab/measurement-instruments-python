@@ -2,7 +2,7 @@
 
 #include <QtCore>
 #include <QMutex>
-#include "dataype.h"
+#include "datatype.h"
 
 
 
