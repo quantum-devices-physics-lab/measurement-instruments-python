@@ -21,6 +21,8 @@ private:
 	int indexlow,indexhigh;
 	MeasurementSetting settings;
 	double max_y_value;
+	QDoubleValidator *doubleValidator;
+	QIntValidator *intValidator;
 
 	
 public slots:

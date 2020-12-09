@@ -12,6 +12,16 @@ OneToneQt::OneToneQt(QWidget *parent)
     ui.setupUi(this);
 	running = false;
 
+	doubleValidator = new QDoubleValidator();
+	intValidator = new QIntValidator();
+
+	ui.FreqStartEdit->setValidator(doubleValidator);
+	ui.FreqStopEdit->setValidator(doubleValidator);
+	ui.NStepsEdit->setValidator(intValidator);
+	ui.LowPowerEdit->setValidator(intValidator);
+	ui.HighPowerEdit->setValidator(intValidator);
+	ui.CircuitResistanceEdit->setValidator(doubleValidator);
+	ui.IFBandwidthEdit->setValidator(doubleValidator);
 
 	settings.startFrequency = 4.7;
 	settings.stopFrequency = 5.2;
