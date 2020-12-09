@@ -9,6 +9,18 @@ PiPulseQt::PiPulseQt(QWidget *parent)
 	ui.setupUi(this);
 	running = false;
 
+	doubleValidator = new QDoubleValidator();
+	intValidator = new QIntValidator();
+
+	ui.initialTauEdit->setValidator(doubleValidator);
+	ui.finalTauEdit->setValidator(doubleValidator);
+	ui.nStepsEdit->setValidator(intValidator);
+	ui.cavityFreqEdit->setValidator(doubleValidator);
+	ui.qubitFreqEdit->setValidator(doubleValidator);
+	ui.nIterEdit->setValidator(intValidator);
+	ui.nStepsQfreqEdit->setValidator(intValidator);
+	ui.finalQFreqEdit->setValidator(doubleValidator);
+	ui.initialQFreqEdit->setValidator(doubleValidator);
 
 	settings.initialTau = 0;
 	settings.finalTau = 10;
@@ -29,6 +41,8 @@ PiPulseQt::PiPulseQt(QWidget *parent)
 	ui.nIterEdit->setText(QString::number(settings.nIter));
 	ui.potencyEdit->setText(QString::number(settings.potency));
 	ui.nStepsQfreqEdit->setText(QString::number(settings.nQFreqSteps));
+
+	
 
 	for (int i = 0; i < settings.nSteps; i++)
 	{

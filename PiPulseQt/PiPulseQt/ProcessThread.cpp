@@ -30,6 +30,7 @@ void ProcessThread::run()
 	}
 
 	double qFreq = mSettings.initialQFreq;
+
 	double dFreq = (mSettings.finalQFreq - mSettings.initialQFreq)/(mSettings.nQFreqSteps-1);
 
 

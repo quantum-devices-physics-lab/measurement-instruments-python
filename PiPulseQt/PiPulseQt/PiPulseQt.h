@@ -18,6 +18,8 @@ private:
 	QVector<double> x, y;
 	MeasurementSetting settings;
 	QCPColorMap *colorMap;
+	QDoubleValidator *doubleValidator;
+	QIntValidator *intValidator;
 
 
 public slots:

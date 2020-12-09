@@ -67,6 +67,12 @@
            <pointsize>14</pointsize>
           </font>
          </property>
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
         </widget>
        </item>
        <item row="3" column="0">
@@ -130,6 +136,12 @@
            <pointsize>14</pointsize>
           </font>
          </property>
+         <property name="inputMask">
+          <string/>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
         </widget>
        </item>
        <item row="6" column="0">
@@ -180,6 +192,9 @@
           <font>
            <pointsize>14</pointsize>
           </font>
+         </property>
+         <property name="inputMask">
+          <string/>
          </property>
         </widget>
        </item>
@@ -409,6 +424,9 @@
             <font>
              <pointsize>10</pointsize>
             </font>
+           </property>
+           <property name="inputMask">
+            <string/>
            </property>
           </widget>
          </item>
