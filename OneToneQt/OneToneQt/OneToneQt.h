@@ -2,7 +2,7 @@
 
 #include <QtWidgets/QMainWindow>
 #include "ui_OneToneQt.h"
-#include "dataype.h"
+#include "datatype.h"
 
 class OneToneQt : public QMainWindow
 {

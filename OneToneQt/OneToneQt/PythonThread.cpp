@@ -9,6 +9,11 @@ double lorentzian(double A, double freq, double res_freq, double sigma)
 
 void PythonThread::run()
 {
+	std::ofstream datafile(PythonSettings.filename);
+
+	datafile << "---------------" << "Low Power" << "---------------" << "\n";
+
+	datafile << "Frequency" << "," << "Amplitude" << "\n";
 
 	double dfreq = (PythonSettings.stopFrequency - PythonSettings.startFrequency) / (PythonSettings.nSteps-1);
 	qDebug("Thread id inside run %d", (int)QThread::currentThreadId());
@@ -28,8 +33,14 @@ void PythonThread::run()
 
 		usleep(10000);
 
+		datafile << freq << "," << result << "\n";
+
 		emit signalDataPoint(0,freq, result);
 	}
+
+
+	datafile << "---------------" << "High Power" << "---------------" << "\n";
+	datafile << "Frequency" << "," << "Amplitude" << "\n";
 
 	//high power
 	for (double freq = PythonSettings.startFrequency; freq <= PythonSettings.stopFrequency; freq += dfreq)
@@ -43,8 +54,12 @@ void PythonThread::run()
 
 		usleep(10000);
 
+		datafile << freq << "," << result << "\n";
+
 		emit signalDataPoint(1, freq, result);
 	}
+
+	datafile.close();
 
 }
 

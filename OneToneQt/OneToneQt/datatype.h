@@ -9,4 +9,5 @@ struct MeasurementSetting {
 	int highPowerAttenuation;
 	double ifBandwidth;
 	double circuitResistance;
+	std::string filename;
 };
