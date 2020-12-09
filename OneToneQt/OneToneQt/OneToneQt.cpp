@@ -58,6 +58,11 @@ OneToneQt::OneToneQt(QWidget *parent)
 	ui.DynamicPlotWidget->graph(1)->setName("High Power");
 }
 
+void OneToneQt::on_MeasurementNameEdit_editingFinished()
+{
+	settings.filename = ui.MeasurementNameEdit->text().toLocal8Bit().constData();
+}
+
 void OneToneQt::on_FreqStartEdit_editingFinished()
 {
 	settings.startFrequency = ui.FreqStartEdit->text().toDouble();

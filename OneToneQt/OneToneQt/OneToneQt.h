@@ -37,6 +37,7 @@ private slots:
 	void on_HighPowerEdit_editingFinished();
 	void on_CircuitResistanceEdit_editingFinished();
 	void on_IFBandwidthEdit_editingFinished();
+	void on_MeasurementNameEdit_editingFinished();
 
 
 signals:
