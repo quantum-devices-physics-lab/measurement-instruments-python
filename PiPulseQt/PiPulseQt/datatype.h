@@ -12,6 +12,7 @@ struct MeasurementSetting {
 	double cFreq; // cavity Frequnecy
 	double potency; // Pulse potency
 	bool CheckQFreqIteration; 
+	std::string filename;
 };
 
 struct ReturnedData {

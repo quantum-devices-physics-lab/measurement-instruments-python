@@ -53,6 +53,12 @@ PiPulseQt::PiPulseQt(QWidget *parent)
 	colorMap->rescaleDataRange(true);
 }
 
+void PiPulseQt::on_saveFileLocationEdit_editingFinished()
+{
+	qDebug("here %s", ui.saveFileLocationEdit->text().toLocal8Bit().constData());
+	settings.filename = ui.saveFileLocationEdit->text().toLocal8Bit().constData();
+}
+
 void PiPulseQt::on_initialQFreqEdit_editingFinished()
 {
 	settings.initialQFreq = ui.initialQFreqEdit->text().toDouble();
@@ -189,7 +195,6 @@ void PiPulseQt::on_StopMeasurementButton_clicked()
 
 void PiPulseQt::receivedDataPoint(int i, int j, double data)
 {
-	qDebug("plotting %d", (int)QThread::currentThreadId());
 	if (!settings.CheckQFreqIteration)
 	{
 		double dtau = (settings.finalTau - settings.initialTau) / (settings.nSteps - 1);

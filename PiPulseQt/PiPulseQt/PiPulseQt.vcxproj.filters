@@ -57,7 +57,7 @@
     </QtMoc>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dataype.h">
+    <ClInclude Include="datatype.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
