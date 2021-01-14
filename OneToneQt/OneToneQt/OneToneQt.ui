@@ -46,7 +46,7 @@
        <rect>
         <x>40</x>
         <y>40</y>
-        <width>651</width>
+        <width>751</width>
         <height>311</height>
        </rect>
       </property>
@@ -54,7 +54,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QPushButton" name="ConnectButton">
+          <widget class="QPushButton" name="VisaConnectionButton">
            <property name="text">
             <string>Connect</string>
            </property>
@@ -115,7 +115,7 @@
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="psg2Edit">
+          <widget class="QLineEdit" name="Psg2Edit">
            <property name="font">
             <font>
              <pointsize>10</pointsize>
@@ -124,7 +124,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QLineEdit" name="psg1Edit">
+          <widget class="QLineEdit" name="Psg1Edit">
            <property name="font">
             <font>
              <pointsize>10</pointsize>
@@ -154,7 +154,7 @@
           </widget>
          </item>
          <item row="3" column="1">
-          <widget class="QLineEdit" name="oscEdit">
+          <widget class="QLineEdit" name="OscEdit">
            <property name="font">
             <font>
              <pointsize>10</pointsize>

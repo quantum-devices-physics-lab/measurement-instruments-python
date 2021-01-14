@@ -101,12 +101,87 @@ OneToneQt::OneToneQt(QWidget *parent)
 	ui.DynamicPlotWidget->graph(1)->setName("High Power");
 }
 
+void OneToneQt::on_VisaConnectionButton_clicked()
+{
+	qDebug("Testing visa Connection");
+
+	qDebug("PSG1 address: %s", ui.Psg1Edit->text().toLocal8Bit().constData());
+	qDebug("PSG2 address: %s", ui.Psg2Edit->text().toLocal8Bit().constData());
+	qDebug("Attenuator address: %s", ui.attenuatorEdit->text().toLocal8Bit().constData());
+	qDebug("Oscilloscope address: %s", ui.OscEdit->text().toLocal8Bit().constData());
+
+	int error;
+	ViSession session, viPSG1, viPSG2, viAttenuator, viOsc;
+	ViChar buffer[5000];
+
+	error = viOpenDefaultRM(&session);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in locating resources");
+	}
+
+	error = viOpen(session, ui.Psg1Edit->text().toLocal8Bit().constData(), VI_NO_LOCK, 10000, &viPSG1);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in opening PSG1");
+	}
+
+	error = viOpen(session, ui.Psg2Edit->text().toLocal8Bit().constData(), VI_NO_LOCK, 10000, &viPSG2);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in opening PSG2");
+	}
+
+	error = viOpen(session, ui.attenuatorEdit->text().toLocal8Bit().constData(), VI_NO_LOCK, 10000, &viAttenuator);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in opening Attenuator");
+	}
+
+	error = viOpen(session, ui.OscEdit->text().toLocal8Bit().constData(), VI_NO_LOCK, 10000, &viOsc);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in opening Oscilloscope");
+	}
+
+	error = viPrintf(viPSG1, "*IDN?\n");
+	error = viScanf(viPSG1, "%t", buffer);
+	qDebug("*IDN? -> %s", buffer);
+
+	ui.PSG1ConnectionStatusLabel->setText(buffer);
+
+	error = viPrintf(viPSG2, "*IDN?\n");
+	error = viScanf(viPSG2, "%t", buffer);
+	qDebug("*IDN? -> %s", buffer);
+
+	ui.PSG2ConnectionStatusLabel->setText(buffer);
+
+	error = viPrintf(viAttenuator, "*IDN?\n");
+	error = viScanf(viAttenuator, "%t", buffer);
+	qDebug("*IDN? -> %s", buffer);
+
+	ui.AttenuatorConnectionStatusLabel->setText(buffer);
+
+	error = viPrintf(viOsc, "*IDN?\n");
+	error = viScanf(viOsc, "%t", buffer);
+	qDebug("*IDN? -> %s", buffer);
+
+	ui.OscilloscopeConnectionStatusLabel->setText(buffer);
+
+	viClose(viPSG1);
+	viClose(viPSG2);
+	viClose(viAttenuator);
+	viClose(viOsc);
+	viClose(session);
+
+}
+
 void OneToneQt::on_ResourceAddressesList_itemActivated(QListWidgetItem *item)
 {
 	QClipboard* clipboard = QGuiApplication::clipboard();
 	clipboard->setText(item->text());
 
-	qDebug("selected "  + item->text().toLatin1());
+	qDebug("selected "  + item->text().toLocal8Bit());
 }
 
 void OneToneQt::on_MeasurementNameEdit_editingFinished()

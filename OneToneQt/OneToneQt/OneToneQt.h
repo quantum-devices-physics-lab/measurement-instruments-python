@@ -32,6 +32,7 @@ public slots:
 private slots:
 	void on_StartMeasurementButton_clicked();
 	void on_ResourceAddressesList_itemActivated(QListWidgetItem*);
+	void on_VisaConnectionButton_clicked();
 	void on_StopMeasurementButton_clicked();
 	void on_FreqStartEdit_editingFinished();
 	void on_FreqStopEdit_editingFinished();
