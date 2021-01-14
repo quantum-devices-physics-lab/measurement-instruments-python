@@ -11,10 +11,29 @@ int main(int argc, char *argv[])
 {
 	int error;
 	ViSession session, vi;
+	ViChar buffer[5000];
+	ViString expr = "?*INSTR";
 
 	ViChar* resrcDefault = "TCPIP0::169.254.101.103::inst0::INSTR";
 	ViChar* resrc = resrcDefault;
 	error = viOpenDefaultRM(&session);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in locating resources");
+	}
+
+	ViFindList findlist;
+	ViUInt32 matches;
+
+	error = viFindRsrc(session, expr, &findlist, &matches, buffer);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in locating resources");
+	}
+
+	qDebug("matches: %d", matches);
+	qDebug("resources: %s", buffer);
+
 	error = viOpen(session, resrc, VI_NO_LOCK, 10000, &vi);
 	if (error != VI_SUCCESS)
 	{
@@ -25,7 +44,7 @@ int main(int argc, char *argv[])
 
 	// Query the instrument identity
 	error = viPrintf(vi, "*IDN?\n");
-	ViChar buffer[5000];
+	
 	error = viScanf(vi, "%t", buffer);
 	qDebug("*IDN? -> %s", buffer);
 
