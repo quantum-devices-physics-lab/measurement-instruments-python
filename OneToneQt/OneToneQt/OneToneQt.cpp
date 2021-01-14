@@ -1,6 +1,7 @@
 #include "OneToneQt.h"
 #include "visa.h"
 #include <Qtcore>
+#include <QGuiApplication>
 
 OneToneQt::OneToneQt(QWidget *parent)
     : QMainWindow(parent)
@@ -98,6 +99,14 @@ OneToneQt::OneToneQt(QWidget *parent)
 	ui.DynamicPlotWidget->graph(1)->setLineStyle(QCPGraph::lsNone);
 	ui.DynamicPlotWidget->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 4));
 	ui.DynamicPlotWidget->graph(1)->setName("High Power");
+}
+
+void OneToneQt::on_ResourceAddressesList_itemActivated(QListWidgetItem *item)
+{
+	QClipboard* clipboard = QGuiApplication::clipboard();
+	clipboard->setText(item->text());
+
+	qDebug("selected "  + item->text().toLatin1());
 }
 
 void OneToneQt::on_MeasurementNameEdit_editingFinished()
