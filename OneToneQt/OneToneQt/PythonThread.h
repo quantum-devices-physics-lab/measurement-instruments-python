@@ -4,6 +4,7 @@
 #include <QMutex>
 #include "datatype.h"
 #include <fstream>
+#include "visa.h"
 
 
 class PythonThread : public QThread
