@@ -29,6 +29,15 @@ int main(int argc, char *argv[])
 	error = viScanf(vi, "%t", buffer);
 	qDebug("*IDN? -> %s", buffer);
 
+	// Ask for frequency
+	error = viPrintf(vi, ":FREQ?\n");
+	error = viScanf(vi, "%t", buffer);
+	qDebug(":FREQ? -> %s", buffer);
+
+	// Set frequency
+	error = viPrintf(vi, ":FREQ +1.5E+10\n");
+	
+
 	error = viClose(vi);
 	error = viClose(session);
 
