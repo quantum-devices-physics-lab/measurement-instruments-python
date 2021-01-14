@@ -79,6 +79,11 @@
         <layout class="QGridLayout" name="gridLayout">
          <item row="2" column="2">
           <widget class="QLabel" name="AttenuatorConnectionStatusLabel">
+           <property name="font">
+            <font>
+             <pointsize>8</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Attenuator Status</string>
            </property>
@@ -86,6 +91,11 @@
          </item>
          <item row="0" column="2">
           <widget class="QLabel" name="PSG1ConnectionStatusLabel">
+           <property name="font">
+            <font>
+             <pointsize>8</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>PSG1 Status</string>
            </property>
@@ -109,6 +119,11 @@
          </item>
          <item row="1" column="2">
           <widget class="QLabel" name="PSG2ConnectionStatusLabel">
+           <property name="font">
+            <font>
+             <pointsize>8</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>PSG2 Status</string>
            </property>
@@ -164,6 +179,11 @@
          </item>
          <item row="3" column="2">
           <widget class="QLabel" name="OscilloscopeConnectionStatusLabel">
+           <property name="font">
+            <font>
+             <pointsize>8</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>Oscilloscope Status</string>
            </property>

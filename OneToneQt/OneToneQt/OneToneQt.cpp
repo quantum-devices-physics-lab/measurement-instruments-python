@@ -105,12 +105,18 @@ void OneToneQt::on_VisaConnectionButton_clicked()
 {
 	qDebug("Testing visa Connection");
 
-	qDebug("PSG1 address: %s", ui.Psg1Edit->text().toLocal8Bit().constData());
-	qDebug("PSG2 address: %s", ui.Psg2Edit->text().toLocal8Bit().constData());
-	qDebug("Attenuator address: %s", ui.attenuatorEdit->text().toLocal8Bit().constData());
-	qDebug("Oscilloscope address: %s", ui.OscEdit->text().toLocal8Bit().constData());
+	settings.Source1Address = ui.Psg1Edit->text().toLocal8Bit().constData();
+	settings.Source2Address = ui.Psg2Edit->text().toLocal8Bit().constData();
+	settings.AttenuatorAddress = ui.attenuatorEdit->text().toLocal8Bit().constData();
+	settings.OscilloscopeAddress = ui.OscEdit->text().toLocal8Bit().constData();
+
+	qDebug("PSG1 address: %s", settings.Source1Address);
+	qDebug("PSG2 address: %s", settings.Source2Address);
+	qDebug("Attenuator address: %s", settings.AttenuatorAddress);
+	qDebug("Oscilloscope address: %s", settings.OscilloscopeAddress);
 
 	int error;
+
 	ViSession session, viPSG1, viPSG2, viAttenuator, viOsc;
 	ViChar buffer[5000];
 
@@ -120,25 +126,25 @@ void OneToneQt::on_VisaConnectionButton_clicked()
 		qDebug("Error in locating resources");
 	}
 
-	error = viOpen(session, ui.Psg1Edit->text().toLocal8Bit().constData(), VI_NO_LOCK, 10000, &viPSG1);
+	error = viOpen(session, settings.Source1Address.c_str(), VI_NO_LOCK, 10000, &viPSG1);
 	if (error != VI_SUCCESS)
 	{
 		qDebug("Error in opening PSG1");
 	}
 
-	error = viOpen(session, ui.Psg2Edit->text().toLocal8Bit().constData(), VI_NO_LOCK, 10000, &viPSG2);
+	error = viOpen(session, settings.Source2Address.c_str(), VI_NO_LOCK, 10000, &viPSG2);
 	if (error != VI_SUCCESS)
 	{
 		qDebug("Error in opening PSG2");
 	}
 
-	error = viOpen(session, ui.attenuatorEdit->text().toLocal8Bit().constData(), VI_NO_LOCK, 10000, &viAttenuator);
+	error = viOpen(session, settings.AttenuatorAddress.c_str(), VI_NO_LOCK, 10000, &viAttenuator);
 	if (error != VI_SUCCESS)
 	{
 		qDebug("Error in opening Attenuator");
 	}
 
-	error = viOpen(session, ui.OscEdit->text().toLocal8Bit().constData(), VI_NO_LOCK, 10000, &viOsc);
+	error = viOpen(session, settings.OscilloscopeAddress.c_str(), VI_NO_LOCK, 10000, &viOsc);
 	if (error != VI_SUCCESS)
 	{
 		qDebug("Error in opening Oscilloscope");
