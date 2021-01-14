@@ -35,7 +35,7 @@
      </font>
     </property>
     <property name="currentIndex">
-     <number>1</number>
+     <number>0</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -46,7 +46,7 @@
        <rect>
         <x>40</x>
         <y>40</y>
-        <width>581</width>
+        <width>751</width>
         <height>311</height>
        </rect>
       </property>
@@ -54,7 +54,7 @@
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout">
          <item>
-          <widget class="QPushButton" name="ConnectButton">
+          <widget class="QPushButton" name="VisaConnectionButton">
            <property name="text">
             <string>Connect</string>
            </property>
@@ -77,8 +77,38 @@
        </item>
        <item>
         <layout class="QGridLayout" name="gridLayout">
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="lineEdit"/>
+         <item row="2" column="2">
+          <widget class="QLabel" name="AttenuatorConnectionStatusLabel">
+           <property name="font">
+            <font>
+             <pointsize>8</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Attenuator Status</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="PSG1ConnectionStatusLabel">
+           <property name="font">
+            <font>
+             <pointsize>8</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>PSG1 Status</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="attenuatorEdit">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+          </widget>
          </item>
          <item row="0" column="0">
           <widget class="QLabel" name="PSG1NameLabel">
@@ -89,13 +119,33 @@
          </item>
          <item row="1" column="2">
           <widget class="QLabel" name="PSG2ConnectionStatusLabel">
+           <property name="font">
+            <font>
+             <pointsize>8</pointsize>
+            </font>
+           </property>
            <property name="text">
             <string>PSG2 Status</string>
            </property>
           </widget>
          </item>
          <item row="1" column="1">
-          <widget class="QLineEdit" name="lineEdit_2"/>
+          <widget class="QLineEdit" name="Psg2Edit">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="Psg1Edit">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+          </widget>
          </item>
          <item row="1" column="0">
           <widget class="QLabel" name="PSG2NameLabel">
@@ -104,27 +154,38 @@
            </property>
           </widget>
          </item>
-         <item row="0" column="2">
-          <widget class="QLabel" name="PSG1ConnectionStatusLabel">
-           <property name="text">
-            <string>PSG1 Status</string>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QLineEdit" name="attenuatorEdit"/>
-         </item>
          <item row="2" column="0">
-          <widget class="QLabel" name="AttenuatorLabel">
+          <widget class="QLabel" name="AttenuatorNameLabel">
            <property name="text">
             <string>Attenuator</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="2">
-          <widget class="QLabel" name="AttenuatorConnectionStatusLabel">
+         <item row="3" column="0">
+          <widget class="QLabel" name="OscilloscopeNameEdit">
            <property name="text">
-            <string>Attenuator Status</string>
+            <string>Oscilloscope</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLineEdit" name="OscEdit">
+           <property name="font">
+            <font>
+             <pointsize>10</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <widget class="QLabel" name="OscilloscopeConnectionStatusLabel">
+           <property name="font">
+            <font>
+             <pointsize>8</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>Oscilloscope Status</string>
            </property>
           </widget>
          </item>
@@ -138,9 +199,28 @@
         </widget>
        </item>
        <item>
-        <widget class="QListWidget" name="ListAddressWidget"/>
+        <widget class="QListWidget" name="ResourceAddressesList">
+         <property name="font">
+          <font>
+           <pointsize>12</pointsize>
+          </font>
+         </property>
+        </widget>
        </item>
       </layout>
+     </widget>
+     <widget class="QLabel" name="clipboardInstructionLabel">
+      <property name="geometry">
+       <rect>
+        <x>100</x>
+        <y>370</y>
+        <width>511</width>
+        <height>21</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Double click on a list item to copy address to clipboard</string>
+      </property>
      </widget>
     </widget>
     <widget class="QWidget" name="tab_2">

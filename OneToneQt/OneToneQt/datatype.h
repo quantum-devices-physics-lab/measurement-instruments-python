@@ -10,4 +10,8 @@ struct MeasurementSetting {
 	double ifBandwidth;
 	double circuitResistance;
 	std::string filename;
+	std::string Source1Address;
+	std::string Source2Address;
+	std::string AttenuatorAddress;
+	std::string OscilloscopeAddress;
 };

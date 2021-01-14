@@ -1,5 +1,7 @@
 #include "OneToneQt.h"
+#include "visa.h"
 #include <Qtcore>
+#include <QGuiApplication>
 
 OneToneQt::OneToneQt(QWidget *parent)
     : QMainWindow(parent)
@@ -9,6 +11,9 @@ OneToneQt::OneToneQt(QWidget *parent)
 	, yhigh(100)
 	, max_y_value(5)
 {
+	int error;
+	ViSession session, vi;
+
     ui.setupUi(this);
 	running = false;
 
@@ -39,6 +44,34 @@ OneToneQt::OneToneQt(QWidget *parent)
 	ui.CircuitResistanceEdit->setText(QString::number(settings.circuitResistance));
 	ui.IFBandwidthEdit->setText(QString::number(settings.ifBandwidth));
 
+	ViChar buffer[5000];
+	error = viOpenDefaultRM(&session);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in locating resources");
+	}
+
+	ViFindList findlist;
+	ViUInt32 matches;
+
+	error = viFindRsrc(session, "?*INSTR", &findlist, &matches, buffer);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in locating resources");
+	}
+
+	qDebug("matches: %d", matches);
+
+	qDebug("resources:\n%s", buffer);
+	ui.ResourceAddressesList->addItem(buffer);
+	for (int i = 1; i < matches; i++) {
+		viFindNext(findlist, buffer);
+		ui.ResourceAddressesList->addItem(buffer);
+	}
+
+	error = viClose(session);
+
+
 	indexlow = 0;
 	indexhigh = 0;
 
@@ -66,6 +99,95 @@ OneToneQt::OneToneQt(QWidget *parent)
 	ui.DynamicPlotWidget->graph(1)->setLineStyle(QCPGraph::lsNone);
 	ui.DynamicPlotWidget->graph(1)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCross, 4));
 	ui.DynamicPlotWidget->graph(1)->setName("High Power");
+}
+
+void OneToneQt::on_VisaConnectionButton_clicked()
+{
+	qDebug("Testing visa Connection");
+
+	settings.Source1Address = ui.Psg1Edit->text().toLocal8Bit().constData();
+	settings.Source2Address = ui.Psg2Edit->text().toLocal8Bit().constData();
+	settings.AttenuatorAddress = ui.attenuatorEdit->text().toLocal8Bit().constData();
+	settings.OscilloscopeAddress = ui.OscEdit->text().toLocal8Bit().constData();
+
+	qDebug("PSG1 address: %s", settings.Source1Address);
+	qDebug("PSG2 address: %s", settings.Source2Address);
+	qDebug("Attenuator address: %s", settings.AttenuatorAddress);
+	qDebug("Oscilloscope address: %s", settings.OscilloscopeAddress);
+
+	int error;
+
+	ViSession session, viPSG1, viPSG2, viAttenuator, viOsc;
+	ViChar buffer[5000];
+
+	error = viOpenDefaultRM(&session);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in locating resources");
+	}
+
+	error = viOpen(session, settings.Source1Address.c_str(), VI_NO_LOCK, 10000, &viPSG1);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in opening PSG1");
+	}
+
+	error = viOpen(session, settings.Source2Address.c_str(), VI_NO_LOCK, 10000, &viPSG2);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in opening PSG2");
+	}
+
+	error = viOpen(session, settings.AttenuatorAddress.c_str(), VI_NO_LOCK, 10000, &viAttenuator);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in opening Attenuator");
+	}
+
+	error = viOpen(session, settings.OscilloscopeAddress.c_str(), VI_NO_LOCK, 10000, &viOsc);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in opening Oscilloscope");
+	}
+
+	error = viPrintf(viPSG1, "*IDN?\n");
+	error = viScanf(viPSG1, "%t", buffer);
+	qDebug("*IDN? -> %s", buffer);
+
+	ui.PSG1ConnectionStatusLabel->setText(buffer);
+
+	error = viPrintf(viPSG2, "*IDN?\n");
+	error = viScanf(viPSG2, "%t", buffer);
+	qDebug("*IDN? -> %s", buffer);
+
+	ui.PSG2ConnectionStatusLabel->setText(buffer);
+
+	error = viPrintf(viAttenuator, "*IDN?\n");
+	error = viScanf(viAttenuator, "%t", buffer);
+	qDebug("*IDN? -> %s", buffer);
+
+	ui.AttenuatorConnectionStatusLabel->setText(buffer);
+
+	error = viPrintf(viOsc, "*IDN?\n");
+	error = viScanf(viOsc, "%t", buffer);
+	qDebug("*IDN? -> %s", buffer);
+
+	ui.OscilloscopeConnectionStatusLabel->setText(buffer);
+
+	viClose(viPSG1);
+	viClose(viPSG2);
+	viClose(viAttenuator);
+	viClose(viOsc);
+	viClose(session);
+
+}
+
+void OneToneQt::on_ResourceAddressesList_itemActivated(QListWidgetItem *item)
+{
+	QClipboard* clipboard = QGuiApplication::clipboard();
+	clipboard->setText(item->text());
+
+	qDebug("selected "  + item->text().toLocal8Bit());
 }
 
 void OneToneQt::on_MeasurementNameEdit_editingFinished()

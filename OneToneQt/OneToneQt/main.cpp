@@ -1,3 +1,5 @@
+
+#define _USE_MATH_DEFINES
 #include "OneToneQt.h"
 #include <QtWidgets/QApplication>
 #include "PythonThread.h"
@@ -7,6 +9,8 @@
 
 int main(int argc, char *argv[])
 {
+
+
 
     QApplication a(argc, argv);	
     OneToneQt w;

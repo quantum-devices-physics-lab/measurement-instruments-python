@@ -9,6 +9,70 @@ double lorentzian(double A, double freq, double res_freq, double sigma)
 
 void PythonThread::run()
 {
+
+	qDebug("Thread id inside run %d", (int)QThread::currentThreadId());
+
+	int error;
+
+	ViSession session, viPSG1, viPSG2, viAttenuator, viOsc;
+	ViChar buffer[5000];
+
+	qDebug("PSG1 address: %s", PythonSettings.Source1Address);
+	qDebug("PSG2 address: %s", PythonSettings.Source2Address);
+	qDebug("Attenuator address: %s", PythonSettings.AttenuatorAddress);
+	qDebug("Oscilloscope address: %s", PythonSettings.OscilloscopeAddress);
+
+	error = viOpenDefaultRM(&session);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in locating resources");
+	}
+
+	error = viOpen(session, PythonSettings.Source1Address.c_str(), VI_NO_LOCK, 10000, &viPSG1);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in opening PSG1");
+	}
+
+	error = viOpen(session, PythonSettings.Source2Address.c_str(), VI_NO_LOCK, 10000, &viPSG2);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in opening PSG2");
+	}
+
+	error = viOpen(session, PythonSettings.AttenuatorAddress.c_str(), VI_NO_LOCK, 10000, &viAttenuator);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in opening Attenuator");
+	}
+
+	error = viOpen(session, PythonSettings.OscilloscopeAddress.c_str(), VI_NO_LOCK, 10000, &viOsc);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in opening Oscilloscope");
+	}
+
+	error = viPrintf(viPSG1, "*IDN?\n");
+	error = viScanf(viPSG1, "%t", buffer);
+	qDebug("*IDN? -> %s", buffer);
+
+
+	error = viPrintf(viPSG2, "*IDN?\n");
+	error = viScanf(viPSG2, "%t", buffer);
+	qDebug("*IDN? -> %s", buffer);
+
+
+	error = viPrintf(viAttenuator, "*IDN?\n");
+	error = viScanf(viAttenuator, "%t", buffer);
+	qDebug("*IDN? -> %s", buffer);
+
+
+	error = viPrintf(viOsc, "*IDN?\n");
+	error = viScanf(viOsc, "%t", buffer);
+	qDebug("*IDN? -> %s", buffer);
+
+
+
 	std::ofstream datafile(PythonSettings.filename);
 
 	datafile << "---------------" << "Low Power" << "---------------" << "\n";
@@ -16,7 +80,7 @@ void PythonThread::run()
 	datafile << "Frequency" << "," << "Amplitude" << "\n";
 
 	double dfreq = (PythonSettings.stopFrequency - PythonSettings.startFrequency) / (PythonSettings.nSteps-1);
-	qDebug("Thread id inside run %d", (int)QThread::currentThreadId());
+	
 
 	double half_freq = (PythonSettings.stopFrequency + PythonSettings.startFrequency) / 2;
 
@@ -61,6 +125,11 @@ void PythonThread::run()
 
 	datafile.close();
 
+	viClose(viPSG1);
+	viClose(viPSG2);
+	viClose(viAttenuator);
+	viClose(viOsc);
+	viClose(session);
 }
 
 void PythonThread::loadAndStart(MeasurementSetting settings)
