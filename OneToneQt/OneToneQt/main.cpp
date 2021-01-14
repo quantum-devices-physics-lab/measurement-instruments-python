@@ -32,7 +32,12 @@ int main(int argc, char *argv[])
 	}
 
 	qDebug("matches: %d", matches);
-	qDebug("resources: %s", buffer);
+
+	qDebug("resources:\n%s", buffer);
+	for (int i = 1; i < matches; i++) {
+		viFindNext(findlist, buffer);
+		qDebug("%s", buffer);
+	}
 
 	error = viOpen(session, resrc, VI_NO_LOCK, 10000, &vi);
 	if (error != VI_SUCCESS)
