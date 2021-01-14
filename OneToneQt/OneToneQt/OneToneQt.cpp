@@ -1,4 +1,5 @@
 #include "OneToneQt.h"
+#include "visa.h"
 #include <Qtcore>
 
 OneToneQt::OneToneQt(QWidget *parent)
@@ -9,6 +10,9 @@ OneToneQt::OneToneQt(QWidget *parent)
 	, yhigh(100)
 	, max_y_value(5)
 {
+	int error;
+	ViSession session, vi;
+
     ui.setupUi(this);
 	running = false;
 
@@ -38,6 +42,34 @@ OneToneQt::OneToneQt(QWidget *parent)
 	ui.HighPowerEdit->setText(QString::number(settings.highPowerAttenuation));
 	ui.CircuitResistanceEdit->setText(QString::number(settings.circuitResistance));
 	ui.IFBandwidthEdit->setText(QString::number(settings.ifBandwidth));
+
+	ViChar buffer[5000];
+	error = viOpenDefaultRM(&session);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in locating resources");
+	}
+
+	ViFindList findlist;
+	ViUInt32 matches;
+
+	error = viFindRsrc(session, "?*INSTR", &findlist, &matches, buffer);
+	if (error != VI_SUCCESS)
+	{
+		qDebug("Error in locating resources");
+	}
+
+	qDebug("matches: %d", matches);
+
+	qDebug("resources:\n%s", buffer);
+	ui.ResourceAddressesList->addItem(buffer);
+	for (int i = 1; i < matches; i++) {
+		viFindNext(findlist, buffer);
+		ui.ResourceAddressesList->addItem(buffer);
+	}
+
+	error = viClose(session);
+
 
 	indexlow = 0;
 	indexhigh = 0;
