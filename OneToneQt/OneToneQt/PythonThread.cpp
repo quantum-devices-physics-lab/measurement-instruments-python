@@ -17,10 +17,10 @@ void PythonThread::run()
 	ViSession session, viPSG1, viPSG2, viAttenuator, viOsc;
 	ViChar buffer[5000];
 
-	qDebug("PSG1 address: %s", PythonSettings.Source1Address);
-	qDebug("PSG2 address: %s", PythonSettings.Source2Address);
-	qDebug("Attenuator address: %s", PythonSettings.AttenuatorAddress);
-	qDebug("Oscilloscope address: %s", PythonSettings.OscilloscopeAddress);
+	qDebug("PSG1 address: %s", PythonSettings.Source1Address.c_str());
+	qDebug("PSG2 address: %s", PythonSettings.Source2Address.c_str());
+	qDebug("Attenuator address: %s", PythonSettings.AttenuatorAddress.c_str());
+	qDebug("Oscilloscope address: %s", PythonSettings.OscilloscopeAddress.c_str());
 
 	error = viOpenDefaultRM(&session);
 	if (error != VI_SUCCESS)

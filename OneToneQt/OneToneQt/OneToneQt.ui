@@ -35,7 +35,7 @@
      </font>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -108,6 +108,9 @@
              <pointsize>10</pointsize>
             </font>
            </property>
+           <property name="text">
+            <string>TCPIP0::169.254.101.101::inst0::INSTR</string>
+           </property>
           </widget>
          </item>
          <item row="0" column="0">
@@ -136,6 +139,9 @@
              <pointsize>10</pointsize>
             </font>
            </property>
+           <property name="text">
+            <string>TCPIP0::169.254.101.104::inst0::INSTR</string>
+           </property>
           </widget>
          </item>
          <item row="0" column="1">
@@ -144,6 +150,9 @@
             <font>
              <pointsize>10</pointsize>
             </font>
+           </property>
+           <property name="text">
+            <string>TCPIP0::169.254.101.103::inst0::INSTR</string>
            </property>
           </widget>
          </item>
@@ -174,6 +183,9 @@
             <font>
              <pointsize>10</pointsize>
             </font>
+           </property>
+           <property name="text">
+            <string>TCPIP0::169.254.101.102::hislip0::INSTR</string>
            </property>
           </widget>
          </item>
@@ -382,7 +394,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="MeasurementNameEdit"/>
+        <widget class="QLineEdit" name="MeasurementNameEdit">
+         <property name="text">
+          <string>C:\Users\lucam\developer\test.csv</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QToolButton" name="toolButton">
