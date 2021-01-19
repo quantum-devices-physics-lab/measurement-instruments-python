@@ -9,7 +9,7 @@ OneToneQt::OneToneQt(QWidget *parent)
 	, ylow(100)
 	, xhigh(100)
 	, yhigh(100)
-	, max_y_value(5)
+	, max_y_value(0)
 {
 	int error;
 	ViSession session, vi;
@@ -35,6 +35,12 @@ OneToneQt::OneToneQt(QWidget *parent)
 	settings.highPowerAttenuation = 10;
 	settings.circuitResistance = 50;
 	settings.ifBandwidth = 300;
+
+
+	settings.Source1Address = ui.Psg1Edit->text().toLocal8Bit().constData();
+	settings.Source2Address = ui.Psg2Edit->text().toLocal8Bit().constData();
+	settings.AttenuatorAddress = ui.attenuatorEdit->text().toLocal8Bit().constData();
+	settings.OscilloscopeAddress = ui.OscEdit->text().toLocal8Bit().constData();
 
 	ui.FreqStartEdit->setText(QString::number(settings.startFrequency));
 	ui.FreqStopEdit->setText(QString::number(settings.stopFrequency));
@@ -84,7 +90,7 @@ OneToneQt::OneToneQt(QWidget *parent)
 	}
 
 	ui.DynamicPlotWidget->xAxis->setRange(settings.startFrequency, settings.stopFrequency);
-	ui.DynamicPlotWidget->yAxis->setRange(0, max_y_value);
+	ui.DynamicPlotWidget->yAxis->setRange(-110, 0);
 	ui.DynamicPlotWidget->legend->setVisible(true);
 
 	ui.DynamicPlotWidget->addGraph();

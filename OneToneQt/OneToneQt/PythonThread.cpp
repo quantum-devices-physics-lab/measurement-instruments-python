@@ -1,9 +1,78 @@
 #include "PythonThread.h"
-
+#include <math.h>
+#include <sstream>
 
 double lorentzian(double A, double freq, double res_freq, double sigma)
 {
 	return (sigma / 2) / ((freq - res_freq)*(freq - res_freq) + (sigma / 2)*(sigma / 2))/3.1415;
+}
+
+int capture_waveform(ViSession viOsc, double *points, int channel)
+{
+	int error;
+	ViChar buffer[5000];
+
+	error = viPrintf(viOsc, ":WAV:FORMAT WORD\n");
+	error = viPrintf(viOsc, ":WAV:SOUR CHAN%d, \n", channel);
+
+	error = viPrintf(viOsc, "WAVEFORM:YINCREMENT?\n");
+	error = viScanf(viOsc, "%t", buffer);
+	qDebug("yincrement -> %s", buffer);
+
+	std::string s = buffer;
+	std::istringstream os(s);
+	double yincrement;
+	os >> yincrement;
+
+	error = viPrintf(viOsc, "WAVEFORM:YORIGIN?\n");
+	error = viScanf(viOsc, "%t", buffer);
+	qDebug("yorigin -> %s", buffer);
+
+	std::string s2 = buffer;
+	std::istringstream os2(s2);
+	double yorigin;
+	os2 >> yorigin;
+
+
+	error = viPrintf(viOsc, ":WAV:DATA? 1, \n");	
+	error = viScanf(viOsc, "%t", buffer);
+	int numberHead = (int)(buffer[1] - 0x30);
+	int numberOfBytes = 0;
+
+	for (int i = 2; i < numberHead + 2; i++)
+	{
+		numberOfBytes += (int)(buffer[i] - 0x30) * pow(10, 3 - i + 2);
+	}
+
+	qDebug("*buffer -> %s", buffer);
+	qDebug("*buffer -> %c", buffer[0]);
+	qDebug("*buffer -> %c", buffer[1]);
+
+
+
+	char numberOfBytesPerPoint = 2;
+	int n_points = numberOfBytes / numberOfBytesPerPoint;
+
+
+
+	for (int i = 0; i < n_points; i++)
+	{
+		unsigned int byte1 = buffer[2 + numberHead + numberOfBytesPerPoint * i];
+		unsigned int byte2 = buffer[2 + numberHead + 1 + numberOfBytesPerPoint * i];
+
+		if (((0xff << 24) & byte2) >> 24 == 255)
+			byte2 += 0x00000100;
+
+		points[i] = ((signed int)((byte1 << 8) | byte2))*yincrement+ yorigin;
+	}
+
+	return 0;
+}
+
+double VtodBm(double V)
+{
+	auto c = 10 * log10(20);
+	return 20 * log10(V) + c;
 }
 
 
@@ -73,6 +142,15 @@ void PythonThread::run()
 
 
 
+
+	double *Y1 = new double[2002];
+	double *Y2 = new double[2002];
+	double *Y3 = new double[2002];
+
+	
+	
+	
+
 	std::ofstream datafile(PythonSettings.filename);
 
 	datafile << "---------------" << "Low Power" << "---------------" << "\n";
@@ -80,9 +158,11 @@ void PythonThread::run()
 	datafile << "Frequency" << "," << "Amplitude" << "\n";
 
 	double dfreq = (PythonSettings.stopFrequency - PythonSettings.startFrequency) / (PythonSettings.nSteps-1);
-	
-
 	double half_freq = (PythonSettings.stopFrequency + PythonSettings.startFrequency) / 2;
+
+	double I = 0;
+	double Q = 0;
+	
 
 
 	//low power
@@ -93,9 +173,29 @@ void PythonThread::run()
 			if (m_stop) break;
 		}
 
-		double result = lorentzian(10,freq, half_freq - 0.05f, 0.01f);
+		error = viPrintf(viPSG1, ":FREQ %fE+9\n", freq+0.07f);
+		error = viPrintf(viPSG2, ":FREQ %fE+9\n", freq);
 
-		usleep(10000);
+		usleep(500000);
+
+		error = viPrintf(viOsc, ":SINGLE\n", freq);
+
+		usleep(500000);
+
+
+
+		capture_waveform(viOsc, Y1, 1);
+		capture_waveform(viOsc, Y2, 2);
+		capture_waveform(viOsc, Y3, 3);
+
+		for (int i = 0; i < 2002; i++)
+		{
+			I += Y1[i] * Y2[i] / 2002;
+			Q += Y3[i] * Y2[i] / 2002;
+		}
+
+		double result = VtodBm(4 * sqrt(I*I + Q * Q));
+
 
 		datafile << freq << "," << result << "\n";
 
@@ -103,9 +203,11 @@ void PythonThread::run()
 	}
 
 
+
+
 	datafile << "---------------" << "High Power" << "---------------" << "\n";
 	datafile << "Frequency" << "," << "Amplitude" << "\n";
-
+	/*
 	//high power
 	for (double freq = PythonSettings.startFrequency; freq <= PythonSettings.stopFrequency; freq += dfreq)
 	{
@@ -122,6 +224,11 @@ void PythonThread::run()
 
 		emit signalDataPoint(1, freq, result);
 	}
+	*/
+
+	delete Y1;
+	delete Y2;
+	delete Y3;
 
 	datafile.close();
 
