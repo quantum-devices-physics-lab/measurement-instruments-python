@@ -252,7 +252,7 @@ class DigitalStorageOscilloscope(Instrument):
         return self._yorigin
 
     @property
-    def xIncrement(self):
+    def yIncrement(self):
         self._yincrement = float(self.query("WAVEFORM:YINCREMENT?").split()[0])
         return self._yincrement
 
@@ -268,13 +268,13 @@ class DigitalStorageOscilloscope(Instrument):
 
     @property
     def sampleRate(self):
-        self._sample_rate = float(self.query("ACQuire:SRATe:ANALog?".format(250e6)).split()[0])
+        self._sample_rate = float(self.query("ACQuire:SRATe:ANALog?").split()[0])
         return self._sample_rate
 
     @sampleRate.setter
     def sampleRate(self, samplerate):
         self.write("ACQuire:SRATe:ANALog {}".format(samplerate))
-        self._sample_rate = float(self.query("ACQuire:SRATe:ANALog?".format(250e6)).split()[0])
+        self._sample_rate = float(self.query("ACQuire:SRATe:ANALog?").split()[0])
 
 
 

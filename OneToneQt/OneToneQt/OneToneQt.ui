@@ -35,7 +35,7 @@
      </font>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>1</number>
     </property>
     <widget class="QWidget" name="tab">
      <attribute name="title">
@@ -108,6 +108,9 @@
              <pointsize>10</pointsize>
             </font>
            </property>
+           <property name="text">
+            <string>TCPIP0::169.254.101.101::inst0::INSTR</string>
+           </property>
           </widget>
          </item>
          <item row="0" column="0">
@@ -136,6 +139,9 @@
              <pointsize>10</pointsize>
             </font>
            </property>
+           <property name="text">
+            <string>TCPIP0::169.254.101.104::inst0::INSTR</string>
+           </property>
           </widget>
          </item>
          <item row="0" column="1">
@@ -144,6 +150,9 @@
             <font>
              <pointsize>10</pointsize>
             </font>
+           </property>
+           <property name="text">
+            <string>TCPIP0::169.254.101.103::inst0::INSTR</string>
            </property>
           </widget>
          </item>
@@ -174,6 +183,9 @@
             <font>
              <pointsize>10</pointsize>
             </font>
+           </property>
+           <property name="text">
+            <string>TCPIP0::169.254.101.102::hislip0::INSTR</string>
            </property>
           </widget>
          </item>
@@ -240,8 +252,8 @@
      <widget class="QPushButton" name="StartMeasurementButton">
       <property name="geometry">
        <rect>
-        <x>160</x>
-        <y>400</y>
+        <x>150</x>
+        <y>470</y>
         <width>101</width>
         <height>41</height>
        </rect>
@@ -256,7 +268,7 @@
         <x>20</x>
         <y>130</y>
         <width>391</width>
-        <height>251</height>
+        <height>320</height>
        </rect>
       </property>
       <layout class="QFormLayout" name="formLayout">
@@ -266,7 +278,7 @@
        <item row="0" column="0">
         <widget class="QLabel" name="FreqStartLabel">
          <property name="text">
-          <string>Frequency Start:</string>
+          <string>Frequency Start (GHz):</string>
          </property>
         </widget>
        </item>
@@ -276,7 +288,7 @@
        <item row="1" column="0">
         <widget class="QLabel" name="FreqStopLabel">
          <property name="text">
-          <string>Frequency Stop:</string>
+          <string>Frequency Stop (GHz):</string>
          </property>
         </widget>
        </item>
@@ -296,7 +308,7 @@
        <item row="3" column="0">
         <widget class="QLabel" name="LowPowerLabel">
          <property name="text">
-          <string>Low Power:</string>
+          <string>Low Power (dBm):</string>
          </property>
         </widget>
        </item>
@@ -306,7 +318,7 @@
        <item row="4" column="0">
         <widget class="QLabel" name="HighPowerLabel">
          <property name="text">
-          <string>High Power:</string>
+          <string>High Power  (dBm):</string>
          </property>
         </widget>
        </item>
@@ -314,24 +326,44 @@
         <widget class="QLineEdit" name="HighPowerEdit"/>
        </item>
        <item row="5" column="0">
-        <widget class="QLabel" name="IFBandwidthLabel">
+        <widget class="QLabel" name="timeRangeLabel">
          <property name="text">
-          <string>IF Bandwidth:</string>
+          <string>Time Range (us):</string>
          </property>
         </widget>
        </item>
        <item row="5" column="1">
-        <widget class="QLineEdit" name="IFBandwidthEdit"/>
+        <widget class="QLineEdit" name="TimeRangeEdit"/>
        </item>
        <item row="6" column="0">
-        <widget class="QLabel" name="CircuitResistanceLabel">
+        <widget class="QLabel" name="SampleRateLabel">
          <property name="text">
-          <string>Circuit Resistance:</string>
+          <string>Sample Rate (MSa/s):</string>
          </property>
         </widget>
        </item>
        <item row="6" column="1">
-        <widget class="QLineEdit" name="CircuitResistanceEdit"/>
+        <widget class="QLineEdit" name="SampleRateEdit"/>
+       </item>
+       <item row="7" column="1">
+        <widget class="QLineEdit" name="IFFrequencyEdit"/>
+       </item>
+       <item row="7" column="0">
+        <widget class="QLabel" name="IFFrequencyLabel">
+         <property name="text">
+          <string>IF Frequency (MHz):</string>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="1">
+        <widget class="QLineEdit" name="AveragesEdit"/>
+       </item>
+       <item row="8" column="0">
+        <widget class="QLabel" name="AveragesLabel">
+         <property name="text">
+          <string>Averages:</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -341,8 +373,8 @@
       </property>
       <property name="geometry">
        <rect>
-        <x>280</x>
-        <y>400</y>
+        <x>270</x>
+        <y>470</y>
         <width>81</width>
         <height>41</height>
        </rect>
@@ -382,7 +414,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="MeasurementNameEdit"/>
+        <widget class="QLineEdit" name="MeasurementNameEdit">
+         <property name="text">
+          <string>C:\Users\lucam\developer\test.csv</string>
+         </property>
+        </widget>
        </item>
        <item>
         <widget class="QToolButton" name="toolButton">

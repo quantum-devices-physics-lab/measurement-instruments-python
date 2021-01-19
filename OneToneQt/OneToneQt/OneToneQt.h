@@ -39,8 +39,10 @@ private slots:
 	void on_NStepsEdit_editingFinished();
 	void on_LowPowerEdit_editingFinished();
 	void on_HighPowerEdit_editingFinished();
-	void on_CircuitResistanceEdit_editingFinished();
-	void on_IFBandwidthEdit_editingFinished();
+	void on_SampleRateEdit_editingFinished();
+	void on_TimeRangeEdit_editingFinished();
+	void on_IFFrequencyEdit_editingFinished();
+	void on_AveragesEdit_editingFinished();
 	void on_MeasurementNameEdit_editingFinished();
 
 

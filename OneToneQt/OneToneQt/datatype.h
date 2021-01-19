@@ -7,8 +7,10 @@ struct MeasurementSetting {
 	int nSteps;
 	int lowPowerAttenuation;
 	int highPowerAttenuation;
-	double ifBandwidth;
-	double circuitResistance;
+	int averages;
+	double timeRange;
+	double sampleRate;
+	double ifFrequency;
 	std::string filename;
 	std::string Source1Address;
 	std::string Source2Address;
