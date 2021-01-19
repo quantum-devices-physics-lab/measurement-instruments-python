@@ -198,17 +198,18 @@ void PythonThread::run()
 	//low power
 	for (double freq = PythonSettings.startFrequency; freq <= PythonSettings.stopFrequency; freq+= dfreq)
 	{
-		{
-			QMutexLocker locker(&m_mutex);
-			if (m_stop) break;
-		}
 
-		I = 0;
-		Q = 0;
+
+		
 
 
 		for (int j = 0; j < PythonSettings.averages; j++)
 		{
+
+			{
+				QMutexLocker locker(&m_mutex);
+				if (m_stop) break;
+			}
 
 			error = viPrintf(viPSG1, ":FREQ %fE+9\n", freq+ ifFreq);
 			error = viPrintf(viPSG2, ":FREQ %fE+9\n", freq);
@@ -240,6 +241,8 @@ void PythonThread::run()
 
 
 		double result = VtodBm(4 * sqrt(I*I + Q * Q));
+		I = 0;
+		Q = 0;
 
 
 		datafile << freq << "," << I <<',' << Q << "\n";
