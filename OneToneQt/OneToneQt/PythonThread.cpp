@@ -1,16 +1,17 @@
 #include "PythonThread.h"
 #include <math.h>
 #include <sstream>
+#include <string>
 
 double lorentzian(double A, double freq, double res_freq, double sigma)
 {
 	return (sigma / 2) / ((freq - res_freq)*(freq - res_freq) + (sigma / 2)*(sigma / 2))/3.1415;
 }
 
-int capture_waveform(ViSession viOsc, double *points, int channel)
+int capture_waveform(ViSession viOsc, char *buffer, double *points, int channel, int nPoints)
 {
 	int error;
-	ViChar buffer[5000];
+
 
 	error = viPrintf(viOsc, ":WAV:FORMAT WORD\n");
 	error = viPrintf(viOsc, ":WAV:SOUR CHAN%d, \n", channel);
@@ -36,12 +37,13 @@ int capture_waveform(ViSession viOsc, double *points, int channel)
 
 	error = viPrintf(viOsc, ":WAV:DATA? 1, \n");	
 	error = viScanf(viOsc, "%t", buffer);
+
 	int numberHead = (int)(buffer[1] - 0x30);
 	int numberOfBytes = 0;
 
 	for (int i = 2; i < numberHead + 2; i++)
 	{
-		numberOfBytes += (int)(buffer[i] - 0x30) * pow(10, 3 - i + 2);
+		numberOfBytes += (int)(buffer[i] - 0x30) * pow(10, numberHead -1 - i + 2);
 	}
 
 	qDebug("*buffer -> %s", buffer);
@@ -84,7 +86,7 @@ void PythonThread::run()
 	int error;
 
 	ViSession session, viPSG1, viPSG2, viAttenuator, viOsc;
-	ViChar buffer[5000];
+	char *buffer = new char[5000];
 
 	qDebug("PSG1 address: %s", PythonSettings.Source1Address.c_str());
 	qDebug("PSG2 address: %s", PythonSettings.Source2Address.c_str());
@@ -140,12 +142,37 @@ void PythonThread::run()
 	error = viScanf(viOsc, "%t", buffer);
 	qDebug("*IDN? -> %s", buffer);
 
+	error = viPrintf(viPSG1, ":OUTP 0\n");
+	error = viPrintf(viPSG2, ":OUTP 0\n");
+
+	error = viPrintf(viPSG1, ":OUTP:MOD 0\n");
+	error = viPrintf(viPSG2, ":OUTP:MOD 0\n");
+
+	error = viPrintf(viPSG1, ":UNIT:POW DBM\n");
+	error = viPrintf(viPSG2, ":UNIT:POW DBM\n");
+
+	error = viPrintf(viPSG1, ":SOUR:POW:LEV:IMM:AMPL 16\n");
+	error = viPrintf(viPSG2, ":SOUR:POW:LEV:IMM:AMPL 1\n");
+
+	error = viPrintf(viOsc, ":STOP\n");
+	error = viPrintf(viOsc, ":TIM:RANG %fE-6\n",PythonSettings.timeRange);
+	error = viPrintf(viOsc, ":ACQ:SRAT:ANAL %fE+6\n",PythonSettings.sampleRate);
+	error = viPrintf(viOsc, ":SINGLE\n");
+	sleep(5);
+	error = viPrintf(viOsc, ":WAV:POIN?\n");
+	error = viScanf(viOsc, "%t", buffer);
+
+	
+	std::string str = buffer;
+	int nPoints = std::stoi(str);
+
+	delete[] buffer;
+	buffer = new char[2 * nPoints + 1000];
 
 
-
-	double *Y1 = new double[2002];
-	double *Y2 = new double[2002];
-	double *Y3 = new double[2002];
+	double *Y1 = new double[nPoints];
+	double *Y2 = new double[nPoints];
+	double *Y3 = new double[nPoints];
 
 	
 	
@@ -155,15 +182,18 @@ void PythonThread::run()
 
 	datafile << "---------------" << "Low Power" << "---------------" << "\n";
 
-	datafile << "Frequency" << "," << "Amplitude" << "\n";
+	datafile << "Frequency" << "," << "I" << "," << "Q" << "\n";
 
-	double dfreq = (PythonSettings.stopFrequency - PythonSettings.startFrequency) / (PythonSettings.nSteps-1);
-	double half_freq = (PythonSettings.stopFrequency + PythonSettings.startFrequency) / 2;
+	const double dfreq = (PythonSettings.stopFrequency - PythonSettings.startFrequency) / (PythonSettings.nSteps-1);
+
+	const double ifFreq = PythonSettings.ifFrequency*1e-3;
+
 
 	double I = 0;
 	double Q = 0;
 	
-
+	error = viPrintf(viPSG1, ":OUTP 1\n");
+	error = viPrintf(viPSG2, ":OUTP 1\n");
 
 	//low power
 	for (double freq = PythonSettings.startFrequency; freq <= PythonSettings.stopFrequency; freq+= dfreq)
@@ -173,31 +203,46 @@ void PythonThread::run()
 			if (m_stop) break;
 		}
 
-		error = viPrintf(viPSG1, ":FREQ %fE+9\n", freq+0.07f);
-		error = viPrintf(viPSG2, ":FREQ %fE+9\n", freq);
-
-		usleep(500000);
-
-		error = viPrintf(viOsc, ":SINGLE\n", freq);
-
-		usleep(500000);
+		I = 0;
+		Q = 0;
 
 
-
-		capture_waveform(viOsc, Y1, 1);
-		capture_waveform(viOsc, Y2, 2);
-		capture_waveform(viOsc, Y3, 3);
-
-		for (int i = 0; i < 2002; i++)
+		for (int j = 0; j < PythonSettings.averages; j++)
 		{
-			I += Y1[i] * Y2[i] / 2002;
-			Q += Y3[i] * Y2[i] / 2002;
+
+			error = viPrintf(viPSG1, ":FREQ %fE+9\n", freq+ ifFreq);
+			error = viPrintf(viPSG2, ":FREQ %fE+9\n", freq);
+
+			usleep(100000);
+
+			error = viPrintf(viOsc, ":SINGLE\n");
+
+			usleep(100000);
+
+
+
+			capture_waveform(viOsc, buffer, Y1, 1, nPoints);
+			capture_waveform(viOsc, buffer, Y2, 2, nPoints);
+			capture_waveform(viOsc, buffer, Y3, 3, nPoints);
+
+
+
+			double aI = 0;
+			double aQ = 0;
+			for (int i = 0; i < nPoints; i++)
+			{
+				aI += Y1[i] * Y2[i] / nPoints;
+				aQ += Y3[i] * Y2[i] / nPoints;
+			}
+			I += aI / PythonSettings.averages;
+			Q += aQ / PythonSettings.averages;
 		}
+
 
 		double result = VtodBm(4 * sqrt(I*I + Q * Q));
 
 
-		datafile << freq << "," << result << "\n";
+		datafile << freq << "," << I <<',' << Q << "\n";
 
 		emit signalDataPoint(0,freq, result);
 	}
@@ -206,7 +251,8 @@ void PythonThread::run()
 
 
 	datafile << "---------------" << "High Power" << "---------------" << "\n";
-	datafile << "Frequency" << "," << "Amplitude" << "\n";
+
+	datafile << "Frequency" << "," << "I" << "," << "Q" << "\n";
 	/*
 	//high power
 	for (double freq = PythonSettings.startFrequency; freq <= PythonSettings.stopFrequency; freq += dfreq)
@@ -226,9 +272,13 @@ void PythonThread::run()
 	}
 	*/
 
-	delete Y1;
-	delete Y2;
-	delete Y3;
+	delete[] Y1;
+	delete[] Y2;
+	delete[] Y3;
+	delete[] buffer;
+
+	error = viPrintf(viPSG1, ":OUTPUT 0\n");
+	error = viPrintf(viPSG2, ":OUTPUT 0\n");
 
 	datafile.close();
 

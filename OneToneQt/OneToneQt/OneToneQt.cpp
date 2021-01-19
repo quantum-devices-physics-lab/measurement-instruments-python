@@ -25,16 +25,20 @@ OneToneQt::OneToneQt(QWidget *parent)
 	ui.NStepsEdit->setValidator(intValidator);
 	ui.LowPowerEdit->setValidator(intValidator);
 	ui.HighPowerEdit->setValidator(intValidator);
-	ui.CircuitResistanceEdit->setValidator(doubleValidator);
-	ui.IFBandwidthEdit->setValidator(doubleValidator);
+	ui.TimeRangeEdit->setValidator(doubleValidator);
+	ui.SampleRateEdit->setValidator(doubleValidator);
+	ui.IFFrequencyEdit->setValidator(doubleValidator);
+	ui.AveragesEdit->setValidator(intValidator);
 
-	settings.startFrequency = 4.7;
-	settings.stopFrequency = 5.2;
+	settings.startFrequency = 4.2;
+	settings.stopFrequency = 5.7;
 	settings.nSteps = 100;
 	settings.lowPowerAttenuation = 60;
 	settings.highPowerAttenuation = 10;
-	settings.circuitResistance = 50;
-	settings.ifBandwidth = 300;
+	settings.timeRange = 1000;
+	settings.sampleRate = 1000;
+	settings.ifFrequency = 70;
+	settings.averages = 16;
 
 
 	settings.Source1Address = ui.Psg1Edit->text().toLocal8Bit().constData();
@@ -47,8 +51,10 @@ OneToneQt::OneToneQt(QWidget *parent)
 	ui.NStepsEdit->setText(QString::number(settings.nSteps));
 	ui.LowPowerEdit->setText(QString::number(settings.lowPowerAttenuation));
 	ui.HighPowerEdit->setText(QString::number(settings.highPowerAttenuation));
-	ui.CircuitResistanceEdit->setText(QString::number(settings.circuitResistance));
-	ui.IFBandwidthEdit->setText(QString::number(settings.ifBandwidth));
+	ui.TimeRangeEdit->setText(QString::number(settings.timeRange));
+	ui.SampleRateEdit->setText(QString::number(settings.sampleRate));
+	ui.IFFrequencyEdit->setText(QString::number(settings.ifFrequency));
+	ui.AveragesEdit->setText(QString::number(settings.averages));
 
 	ViChar buffer[5000];
 	error = viOpenDefaultRM(&session);
@@ -233,14 +239,24 @@ void OneToneQt::on_HighPowerEdit_editingFinished()
 	settings.highPowerAttenuation = ui.HighPowerEdit->text().toInt();
 }
 
-void OneToneQt::on_CircuitResistanceEdit_editingFinished()
+void OneToneQt::on_SampleRateEdit_editingFinished()
 {
-	settings.circuitResistance = ui.CircuitResistanceEdit->text().toDouble();
+	settings.sampleRate = ui.SampleRateEdit->text().toDouble();
 }
 
-void OneToneQt::on_IFBandwidthEdit_editingFinished()
+void OneToneQt::on_TimeRangeEdit_editingFinished()
 {
-	settings.ifBandwidth = ui.IFBandwidthEdit->text().toDouble();
+	settings.timeRange = ui.TimeRangeEdit->text().toDouble();
+}
+
+void OneToneQt::on_IFFrequencyEdit_editingFinished()
+{
+	settings.ifFrequency = ui.IFFrequencyEdit->text().toDouble();
+}
+
+void OneToneQt::on_AveragesEdit_editingFinished()
+{
+	settings.averages = ui.AveragesEdit->text().toDouble();
 }
 
 void OneToneQt::on_StartMeasurementButton_clicked()
