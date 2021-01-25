@@ -29,6 +29,8 @@ OneToneQt::OneToneQt(QWidget *parent)
 	ui.SampleRateEdit->setValidator(doubleValidator);
 	ui.IFFrequencyEdit->setValidator(doubleValidator);
 	ui.AveragesEdit->setValidator(intValidator);
+	ui.Source1AmpEdit->setValidator(intValidator);
+	ui.Source2AmpEdit->setValidator(intValidator);
 
 	settings.startFrequency = 4.2;
 	settings.stopFrequency = 5.7;
@@ -56,6 +58,8 @@ OneToneQt::OneToneQt(QWidget *parent)
 	ui.SampleRateEdit->setText(QString::number(settings.sampleRate));
 	ui.IFFrequencyEdit->setText(QString::number(settings.ifFrequency));
 	ui.AveragesEdit->setText(QString::number(settings.averages));
+	ui.Source1AmpEdit->setText(QString::number(settings.source1Amp));
+	ui.Source2AmpEdit->setText(QString::number(settings.source2Amp));
 
 	ViChar buffer[5000];
 	error = viOpenDefaultRM(&session);
@@ -229,6 +233,17 @@ void OneToneQt::on_NStepsEdit_editingFinished()
 	ylow.resize(settings.nSteps);
 	yhigh.resize(settings.nSteps);
 }
+
+void OneToneQt::on_Source1AmpEdit_editingFinished()
+{
+	settings.source1Amp = ui.Source1AmpEdit->text().toInt();
+}
+
+void OneToneQt::on_Source2AmpEdit_editingFinished()
+{
+	settings.source2Amp = ui.Source2AmpEdit->text().toInt();
+}
+
 
 void OneToneQt::on_LowPowerEdit_editingFinished()
 {
