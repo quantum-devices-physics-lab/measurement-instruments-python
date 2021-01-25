@@ -16,4 +16,6 @@ struct MeasurementSetting {
 	std::string Source2Address;
 	std::string AttenuatorAddress;
 	std::string OscilloscopeAddress;
+	int source1Amp;
+	int source2Amp;
 };
