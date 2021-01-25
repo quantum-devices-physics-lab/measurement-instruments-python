@@ -39,7 +39,8 @@ OneToneQt::OneToneQt(QWidget *parent)
 	settings.sampleRate = 1000;
 	settings.ifFrequency = 70;
 	settings.averages = 16;
-
+	settings.source1Amp = 20;
+	settings.source2Amp = 4;
 
 	settings.Source1Address = ui.Psg1Edit->text().toLocal8Bit().constData();
 	settings.Source2Address = ui.Psg2Edit->text().toLocal8Bit().constData();
