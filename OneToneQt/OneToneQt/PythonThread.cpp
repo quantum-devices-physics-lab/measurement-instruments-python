@@ -151,8 +151,8 @@ void PythonThread::run()
 	error = viPrintf(viPSG1, ":UNIT:POW DBM\n");
 	error = viPrintf(viPSG2, ":UNIT:POW DBM\n");
 
-	error = viPrintf(viPSG1, ":SOUR:POW:LEV:IMM:AMPL 16\n");
-	error = viPrintf(viPSG2, ":SOUR:POW:LEV:IMM:AMPL 1\n");
+	error = viPrintf(viPSG1, ":SOUR:POW:LEV:IMM:AMPL $d\n",PythonSettings.source1Amp);
+	error = viPrintf(viPSG2, ":SOUR:POW:LEV:IMM:AMPL $d\n", PythonSettings.source2Amp);
 
 	error = viPrintf(viOsc, ":STOP\n");
 	error = viPrintf(viOsc, ":TIM:RANG %fE-6\n",PythonSettings.timeRange);
