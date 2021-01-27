@@ -5,6 +5,8 @@ OneToneSimple::OneToneSimple(QWidget *parent)
 {
     ui.setupUi(this);
 
+	ui.PlotWidget->yAxis->setRange(-110, 0);
+
 	ui.PlotWidget->addGraph();
 	ui.PlotWidget->graph(0)->setPen(QColor(0, 0, 255, 255));
 	ui.PlotWidget->graph(0)->setLineStyle(QCPGraph::lsNone);
