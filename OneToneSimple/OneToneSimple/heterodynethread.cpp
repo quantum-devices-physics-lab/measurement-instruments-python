@@ -1,5 +1,6 @@
 #include "heterodynethread.h"
 #include <qmath.h>
+#include <random>
 
 double lorentzian(double A, double freq, double res_freq, double sigma)
 {
@@ -27,6 +28,12 @@ void HeterodyneThread::run()
 {
 	heterodyneSettings.attenuation = 10;
 
+	double lower_bound = -0.0001;
+	double upper_bound = 0.0001;
+	std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
+	std::uniform_real_distribution<double> unif_dut(lower_bound*10, upper_bound * 100);
+	std::default_random_engine re;
+
 	emit signalLog("test");
 
 	int N = 1000;
@@ -46,7 +53,7 @@ void HeterodyneThread::run()
 	}
 	double I, Q;
 
-	for (double freq = 1.0; freq < 5.0; freq += 0.01)
+	for (double freq = 1.0; freq < 5.0; freq += 0.05)
 	{
 		I = 0;
 		Q = 0;
@@ -57,10 +64,12 @@ void HeterodyneThread::run()
 				QMutexLocker locker(&m_mutex);
 				if (m_stop) break;
 			}
+	
 
-			wave(0.001, freq, 0, t, sourceI, N);
-			wave(0.001, freq, 3.1415/2, t, sourceQ, N);
-			wave(lorentzian(1,freq,3,0.1), freq, 0, t, dut, N);
+			wave(0.001+unif(re), freq, 0, t, sourceI, N);
+			wave(0.001+unif(re), freq, 3.1415/2, t, sourceQ, N);
+			wave(lorentzian(1,freq,3,0.1)+unif_dut(re), freq, 0, t, dut, N);
+			
 		}
 
 		
@@ -77,7 +86,6 @@ void HeterodyneThread::run()
 
 		double result = VtodBm(4 * sqrt(I*I + Q * Q));
 		emit signalDataPoint(freq, result);
-
 	}
 
 	delete t;
