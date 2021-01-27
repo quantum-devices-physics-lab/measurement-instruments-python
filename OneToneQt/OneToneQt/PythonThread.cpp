@@ -247,7 +247,7 @@ void PythonThread::run()
 
 		datafile << freq << "," << I <<',' << Q << "\n";
 
-		emit signalDataPoint(0,freq, result);
+			
 	}
 
 

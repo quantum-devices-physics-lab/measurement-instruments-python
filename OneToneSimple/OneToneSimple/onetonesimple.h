@@ -10,6 +10,18 @@ class OneToneSimple : public QMainWindow
 public:
     OneToneSimple(QWidget *parent = Q_NULLPTR);
 
+public slots:
+	void receivedDataPoint(double, double);
+	void receivedLog(char*);
+
+private slots:
+	void on_StopButton_clicked();
+	
+
 private:
     Ui::OneToneSimpleClass ui;
+	QVector<double> x, y;
+
+signals:
+	void stopMeasurement();
 };
