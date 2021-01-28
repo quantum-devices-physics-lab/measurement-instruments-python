@@ -15,6 +15,7 @@ private:
 	QMutex m_mutex;
 	bool m_stop = false;
 	MeasurementSetting heterodyneSettings;
+	void simulate();
 
 protected:
 	virtual void run();

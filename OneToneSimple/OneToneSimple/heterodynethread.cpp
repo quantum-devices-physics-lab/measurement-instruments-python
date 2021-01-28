@@ -23,18 +23,17 @@ double VtodBm(double V)
 	return 20 * log10(V) + c;
 }
 
-
-void HeterodyneThread::run()
+void HeterodyneThread::simulate()
 {
 	heterodyneSettings.attenuation = 10;
 
 	double lower_bound = -0.0001;
 	double upper_bound = 0.0001;
 	std::uniform_real_distribution<double> unif(lower_bound, upper_bound);
-	std::uniform_real_distribution<double> unif_dut(lower_bound*10, upper_bound * 100);
+	std::uniform_real_distribution<double> unif_dut(lower_bound * 10, upper_bound * 100);
 	std::default_random_engine re;
 
-	emit signalLog("test");
+	
 
 	int N = 1000;
 	double* t = new double[N];
@@ -64,15 +63,15 @@ void HeterodyneThread::run()
 				QMutexLocker locker(&m_mutex);
 				if (m_stop) break;
 			}
-	
 
-			wave(0.001+unif(re), freq, 0, t, sourceI, N);
-			wave(0.001+unif(re), freq, 3.1415/2, t, sourceQ, N);
-			wave(lorentzian(1,freq,3,0.1)+unif_dut(re), freq, 0, t, dut, N);
-			
+
+			wave(0.001 + unif(re), freq, 0, t, sourceI, N);
+			wave(0.001 + unif(re), freq, 3.1415 / 2, t, sourceQ, N);
+			wave(lorentzian(1, freq, 3, 0.1) + unif_dut(re), freq, 0, t, dut, N);
+
 		}
 
-		
+
 		for (int i = 0; i < N; i++)
 		{
 			{
@@ -92,7 +91,14 @@ void HeterodyneThread::run()
 	delete sourceI;
 	delete sourceQ;
 	delete dut;
+}
 
+
+void HeterodyneThread::run()
+{
+	
+	emit signalLog("Simulation");
+	simulate();
 }
 
 void HeterodyneThread::stop()
