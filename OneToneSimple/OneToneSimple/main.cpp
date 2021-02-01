@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 
 		qDebug("Thread id %d", (int)QThread::currentThreadId());
 
-		HeterodyneThread t();
+		HeterodyneThread t;
 		QObject::connect(&t, SIGNAL(signalDataPoint(double, double)), &w, SLOT(receivedDataPoint(double, double)));
 		QObject::connect(&t, SIGNAL(signalLog(char*)), &w, SLOT(receivedLog(char*)));
 		QObject::connect(&w, SIGNAL(stopMeasurement()), &t, SLOT(stop()));
