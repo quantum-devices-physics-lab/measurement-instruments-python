@@ -44,6 +44,8 @@ private slots:
 	void on_IFFrequencyEdit_editingFinished();
 	void on_AveragesEdit_editingFinished();
 	void on_MeasurementNameEdit_editingFinished();
+	void on_Source1AmpEdit_editingFinished();
+	void on_Source2AmpEdit_editingFinished();
 
 
 signals:

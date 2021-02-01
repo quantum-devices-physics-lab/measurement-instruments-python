@@ -18,3 +18,13 @@ PiPulseQt/x64/
 PiPulseQt/x86/
 PiPulseQt/PiPulseQt/x64/
 PiPulseQt/PiPulseQt/x86/
+
+
+
+OneToneSimple/*.db
+OneToneSimple/OneToneSimple.db
+OneToneSimple/.vs/
+OneToneSimple/x64/
+OneToneSimple/x86/
+OneToneSimple/OneToneSimple/x64/
+OneToneSimple/OneToneSimple/x86/

@@ -1,12 +1,10 @@
 #pragma once
 
-
 struct MeasurementSetting {
 	double startFrequency;
 	double stopFrequency;
 	int nSteps;
-	int lowPowerAttenuation;
-	int highPowerAttenuation;
+	int attenuation;
 	int averages;
 	double timeRange;
 	double sampleRate;
