@@ -4,17 +4,29 @@
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    OneToneSimple w;
-    w.show();
+	QApplication a(argc, argv);
+	OneToneSimple w;
+	w.show();
 
-	qDebug("Thread id %d", (int)QThread::currentThreadId());
+	bool ok;
+	QString dirText = QInputDialog::getText(0, "Experiment Directory",
+		"Directory:", QLineEdit::Normal,
+		QDir::home().dirName(), &ok);
+	
+	qDebug(dirText.toUtf8());
 
-	HeterodyneThread t;
-	QObject::connect(&t, SIGNAL(signalDataPoint(double, double)), &w, SLOT(receivedDataPoint(double, double)));
-	QObject::connect(&t, SIGNAL(signalLog(char*)), &w, SLOT(receivedLog(char*)));
-	QObject::connect(&w, SIGNAL(stopMeasurement()), &t, SLOT(stop()));
+	if(ok) {
 
-	t.start();
-    return a.exec();
+		qDebug("Thread id %d", (int)QThread::currentThreadId());
+
+		HeterodyneThread t();
+		QObject::connect(&t, SIGNAL(signalDataPoint(double, double)), &w, SLOT(receivedDataPoint(double, double)));
+		QObject::connect(&t, SIGNAL(signalLog(char*)), &w, SLOT(receivedLog(char*)));
+		QObject::connect(&w, SIGNAL(stopMeasurement()), &t, SLOT(stop()));
+
+		t.start();
+		return a.exec();
+	}
+
+	return 0;
 }
