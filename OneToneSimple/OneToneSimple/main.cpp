@@ -13,13 +13,11 @@ int main(int argc, char *argv[])
 		"Directory:", QLineEdit::Normal,
 		QDir::home().dirName(), &ok);
 	
-	qDebug(dirText.toUtf8());
-
 	if(ok) {
 
 		qDebug("Thread id %d", (int)QThread::currentThreadId());
-
-		HeterodyneThread t;
+		
+		HeterodyneThread t(dirText.toUtf8().toStdString());
 		QObject::connect(&t, SIGNAL(signalDataPoint(double, double)), &w, SLOT(receivedDataPoint(double, double)));
 		QObject::connect(&t, SIGNAL(signalLog(char*)), &w, SLOT(receivedLog(char*)));
 		QObject::connect(&w, SIGNAL(stopMeasurement()), &t, SLOT(stop()));

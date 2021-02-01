@@ -96,6 +96,8 @@ void HeterodyneThread::simulate()
 
 void HeterodyneThread::run()
 {
+	qDebug("Thread::stop called from main thread: %d", currentThreadId());
+	qDebug(dirName.c_str());
 	
 	emit signalLog("Simulation");
 	simulate();
@@ -106,4 +108,9 @@ void HeterodyneThread::stop()
 	qDebug("Thread::stop called from main thread: %d", currentThreadId());
 	QMutexLocker locker(&m_mutex);
 	m_stop = true;
+}
+
+HeterodyneThread::HeterodyneThread(std::string dir)
+{
+	dirName = dir;
 }
