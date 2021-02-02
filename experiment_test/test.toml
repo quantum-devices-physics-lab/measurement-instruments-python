@@ -1,0 +1,25 @@
+title = "a experiment"
+
+[settings]
+savefile_name = "file_save"
+simulation = true
+
+[settings.instruments]
+Attenuator = "a"
+Source1 = "s1"
+Source2 = "s2"
+Oscilloscope = "osc"
+Channel_I_ref = 1
+Channel_Q_ref = 2
+Channel_DUT_signal = 3
+
+[experiment]
+frequencies = [1.2,5.5]
+frequency_nsteps = 1000
+attenuation = 90
+averages = 1
+time_range = 1e-6
+sample_rate = 1e3
+if_frequency = 1.0
+source1_amp = -1
+source2_amp = -1

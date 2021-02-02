@@ -2,6 +2,7 @@
 #include <QtWidgets/QApplication>
 #include "heterodynethread.h"
 
+
 int main(int argc, char *argv[])
 {
 	QApplication a(argc, argv);
@@ -9,9 +10,10 @@ int main(int argc, char *argv[])
 	w.show();
 
 	bool ok;
-	QString dirText = QInputDialog::getText(0, "Experiment Directory",
-		"Directory:", QLineEdit::Normal,
-		QDir::home().dirName(), &ok);
+	const char* filename = "C:\\Users\\lucam\\Documents\\Mestrado\\measurement-instruments-python\\experiment_test\\test.toml";
+	QString dirText = QInputDialog::getText(0, "Experiment TOML File",
+		"File name:", QLineEdit::Normal,
+		filename, &ok);
 	
 	if(ok) {
 

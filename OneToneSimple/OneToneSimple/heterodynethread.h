@@ -16,7 +16,7 @@ private:
 	bool m_stop = false;
 	MeasurementSetting heterodyneSettings;
 	void simulate();
-	std::string dirName;
+	void execute();
 
 protected:
 	virtual void run();
