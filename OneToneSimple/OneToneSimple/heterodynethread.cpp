@@ -26,7 +26,6 @@ double VtodBm(double V)
 
 void HeterodyneThread::simulate()
 {
-	heterodyneSettings.attenuation = 10;
 
 	double lower_bound = -0.0001;
 	double upper_bound = 0.0001;
@@ -36,7 +35,7 @@ void HeterodyneThread::simulate()
 
 	
 
-	int N = 1000;
+	int N = int(heterodyneSettings.sampleRate*heterodyneSettings.timeRange);
 	double* t = new double[N];
 	double* sourceI = new double[N];
 	double* sourceQ = new double[N];
@@ -53,7 +52,8 @@ void HeterodyneThread::simulate()
 	}
 	double I, Q;
 
-	for (double freq = 1.0; freq < 5.0; freq += 0.05)
+
+	for (double freq = heterodyneSettings.startFrequency; freq < heterodyneSettings.stopFrequency; freq += (heterodyneSettings.stopFrequency- heterodyneSettings.startFrequency)/heterodyneSettings.nSteps )
 	{
 		I = 0;
 		Q = 0;
@@ -131,7 +131,7 @@ HeterodyneThread::HeterodyneThread(std::string dir)
 
 	const auto data = toml::parse(dir.c_str());
 	
-	const auto& addresses = toml::find(data, "settings","instruments");
+	const auto& instruments = toml::find(data, "settings","instruments");
 
 	const auto toSimulate = toml::find<bool>(data, "settings", "simulation");
 	heterodyneSettings.isSimulation = toSimulate;
@@ -139,14 +139,24 @@ HeterodyneThread::HeterodyneThread(std::string dir)
 	const auto filename = toml::find<std::string>(data, "settings", "savefile_name");
 	heterodyneSettings.filename = filename;
 
-	const auto att_address = toml::find<std::string>(addresses, "Attenuator");
-	const auto source1_address = toml::find<std::string>(addresses, "Source1");
-	const auto source2_address = toml::find<std::string>(addresses, "Source2");
-	const auto osc_address = toml::find<std::string>(addresses, "Oscilloscope");
+	const auto att_address = toml::find<std::string>(instruments, "Attenuator");
+	const auto source1_address = toml::find<std::string>(instruments, "Source1");
+	const auto source2_address = toml::find<std::string>(instruments, "Source2");
+	const auto osc_address = toml::find<std::string>(instruments, "Oscilloscope");
 	heterodyneSettings.Source1Address = source1_address;
 	heterodyneSettings.Source2Address = source2_address;
 	heterodyneSettings.AttenuatorAddress = att_address;
 	heterodyneSettings.OscilloscopeAddress = osc_address;
+
+	const auto Channel_I_ref = toml::find<int>(instruments, "Channel_I_ref");
+	heterodyneSettings.ChannelI = Channel_I_ref;
+
+	const auto Channel_Q_ref = toml::find<int>(instruments, "Channel_Q_ref");
+	heterodyneSettings.ChannelQ = Channel_Q_ref;
+
+	const auto Channel_DUT_signal = toml::find<int>(instruments,"Channel_DUT_signal");
+	heterodyneSettings.ChannelSignal = Channel_DUT_signal;
+
 
 	const auto& experiment = toml::find(data, "experiment");
 
@@ -177,5 +187,6 @@ HeterodyneThread::HeterodyneThread(std::string dir)
 
 	const auto source2Amp = toml::find<int>(experiment, "source2_amp");
 	heterodyneSettings.source2Amp = source2Amp;
+
 
 }
