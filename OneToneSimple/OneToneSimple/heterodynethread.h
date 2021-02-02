@@ -16,9 +16,13 @@ private:
 	bool m_stop = false;
 	MeasurementSetting heterodyneSettings;
 	void simulate();
+	void execute();
 
 protected:
 	virtual void run();
+
+public:
+	HeterodyneThread(std::string);
 
 public slots:
 	void stop();
